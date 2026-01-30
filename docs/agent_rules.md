@@ -34,3 +34,13 @@
 - Reports in Dateien unter `docs/` ablegen (z.B. `docs/report.md`).
 - AgentTodo-Einträge erweitern, nicht löschen; Build-Test-Punkt nach OS/Compiler gruppiert.
 - AgentTodo-Einträge nach erfolgreicher Fertigstellung als erledigt markieren.
+
+## Reports
+- Reports sind immer im MarkDown-Format und werden immer in Ordner docs/Reports abgelegt. Jeder Reportdateinamen beginnt mit "Report_", gefolgt vom Datum und dann die Uhrzeit gefolgt von einem Sinnstiftenden Namen.
+
+## TODO-Dateien
+- Punkte in der Todo-Liste werden mit laufenden nummern aufgezählt
+- Unterpunkte werden mit grossen Buchstaben nummeriert.
+- UnterUnterpunkte werden mit römischen Zahlen nummeriert.
+- Jeder punkt und unterpunkt wird mit "[ ]" gekennzeichnet ob ein Punkt erledigt ist oder nicht.
+- Der KI-Agent hat selbständig nach erfolgreicher umsetzung eines Punkte ihn als erledigt zu markieren.

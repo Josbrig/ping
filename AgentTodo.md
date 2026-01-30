@@ -10,7 +10,7 @@
 - [X] PingSession implementieren (periodisches Pingen, Weitergabe der Messdaten an StatisticsAggregator)
 - [X] StatisticsAggregator implementieren (Min/Max/Mittelwert/Median, Paketverlust, Histogramm-Buckets, Zeitreihenpuffer)
 - [X] ConsoleView implementieren (Tabellenansicht, Zeitverlaufsgrafik, Histogramm-Ausgabe, regelmäßige Aktualisierung)
-- [ ] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)
+- [X] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)
 - [ ] CSV-Export der Statistiken implementieren
 - [ ] JSON-Export der Statistiken implementieren
 - [ ] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen

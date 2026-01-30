@@ -13,8 +13,8 @@
 - [X] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)
 - [X] CSV-Export der Statistiken implementieren
 - [X] JSON-Export der Statistiken implementieren
-- [ ] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen
-- [ ] Integrationstests für Ping-Workflow mit mehreren Zielen erstellen
+- [X] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen
+- [X] Integrationstests für Ping-Workflow mit mehreren Zielen erstellen
 - [ ] CMake-Targets für Tests definieren und automatisierte Testausführung einrichten
 - [ ] Konsolen-Ausgaben mit der Beschreibung in README.md abgleichen und bei Bedarf anpassen
 - [ ] Build-Konfigurationen für Debug/Release für alle Zielplattformen testen

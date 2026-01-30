@@ -1,5 +1,10 @@
 # KI-Agenten Regeln für dieses Projekt
 
+> Hinweis: Diese Regeln sind vor jeder Arbeit am Projekt zu lesen und strikt einzuhalten.
+
+## Anweisungen an den ki-Agenten für JEDEN Prompt (und ergänzende Prompts)
+- Jede Anweisung/Aufgabe, soll in einer Reportdatei für Prompts im Verzeichnis "docs/prompts" Archiviert werden. Soll der Prompt mit nachfragen, deren Antworten und den Ausgaben des KI-Agenten Archiviert werden. Ausgaben die in eine Datei gingen nur referenziert werden. Der Report-Dateiname mit laufender Nummer, Datum+Uhrzeit und kurzem, aussagekräftigem Namen.
+
 ## Build & Tests
 - Nutze CMake mit getrennter Konfiguration und Build: `cmake -S . -B build`, dann `cmake --build build --config <Debug|Release>`.
 - Tests laufen über `ctest --test-dir build --build-config <Config> --output-on-failure`.
@@ -29,4 +34,3 @@
 - Reports in Dateien unter `docs/` ablegen (z.B. `docs/report.md`).
 - AgentTodo-Einträge erweitern, nicht löschen; Build-Test-Punkt nach OS/Compiler gruppiert.
 - AgentTodo-Einträge nach erfolgreicher Fertigstellung als erledigt markieren.
-- Für jeden Prompt (inkl. Nachfolgeprompts bis zur erfolgreichen Umsetzung) einen Prompt-Report in `docs/` ablegen: Dateiname mit laufender Nummer, Datum+Uhrzeit und kurzem, aussagekräftigem Namen.

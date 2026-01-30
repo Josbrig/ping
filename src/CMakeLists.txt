@@ -2,6 +2,7 @@ target_sources(pingstats PRIVATE
     main.cpp
     platform_ping_backend_factory.cpp
     ping_session.cpp
+    statistics_aggregator.cpp
 )
 
 if(APPLE)

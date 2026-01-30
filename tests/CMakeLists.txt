@@ -9,11 +9,11 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(statistics_aggregator_tests
     statistics_aggregator_tests.cpp
+    ../src/statistics_aggregator.cpp
 )
 
 target_link_libraries(statistics_aggregator_tests PRIVATE
     Catch2::Catch2WithMain
-    pingstats
 )
 
 target_include_directories(statistics_aggregator_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
@@ -24,11 +24,12 @@ catch_discover_tests(statistics_aggregator_tests)
 
 add_executable(ping_workflow_tests
     ping_workflow_tests.cpp
+    ../src/ping_session.cpp
+    ../src/statistics_aggregator.cpp
 )
 
 target_link_libraries(ping_workflow_tests PRIVATE
     Catch2::Catch2WithMain
-    pingstats
 )
 
 target_include_directories(ping_workflow_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)

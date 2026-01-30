@@ -15,9 +15,16 @@
 - [X] JSON-Export der Statistiken implementieren
 - [X] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen
 - [X] Integrationstests für Ping-Workflow mit mehreren Zielen erstellen
-- [ ] CMake-Targets für Tests definieren und automatisierte Testausführung einrichten
+- [X] CMake-Targets für Tests definieren und automatisierte Testausführung einrichten
 - [ ] Konsolen-Ausgaben mit der Beschreibung in README.md abgleichen und bei Bedarf anpassen
 - [ ] Build-Konfigurationen für Debug/Release für alle Zielplattformen testen
+  - Betriebssysteme mit zugehörigen Compilern:
+    - [ ] Linux (GCC, Clang)
+    - [ ] macOS (Clang)
+    - [ ] WSL (GCC, Clang)
+    - [ ] Cygwin (GCC)
+    - [ ] MinGW (GCC/Clang)
+    - [ ] Windows (MSVC)
 - [ ] Skripte oder Konfigurationen für plattformübergreifende Builds (Linux/macOS/WSL/Cygwin/MinGW) anlegen
 - [ ] Laufzeittests mit Beispielzielen (8.8.8.8, 1.1.1.1, example.org) automatisiert ausführen und Ergebnisse protokollieren
 - [ ] Ergebnisse der Laufzeittests auswerten und in die weitere Optimierung von Performance und Robustheit einfließen lassen

@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(pingstats
-    src/main.cpp
-)
+add_executable(pingstats)
+
+target_include_directories(pingstats PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_subdirectory(src)
+add_subdirectory(tests)

@@ -3,7 +3,7 @@
 - [x] Projektgrundstruktur anlegen (CMake-Projekt, Ordnerstruktur src/include/tests/docs/plans)
 - [X] Zentrale Architekturdatei erstellen (docs/architecture.md) mit Beschreibung der Module
 - [X] Schnittstellen für PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend entwerfen
-- [ ] CMakeLists.txt für Hauptprojekt und ggf. Unterverzeichnisse erstellen
+- [X] CMakeLists.txt für Hauptprojekt und ggf. Unterverzeichnisse erstellen
 - [ ] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
 - [ ] ICMP-Ping-Basisfunktion auf macOS anpassen
 - [ ] Portierbare PlatformPingBackend-Abstraktion für Linux/macOS/WSL/Cygwin/MinGW implementieren

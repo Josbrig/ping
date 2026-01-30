@@ -9,6 +9,7 @@
 
 #include "ping_session.hpp"
 #include "statistics_aggregator_impl.hpp"
+#include "platform_ping_backend.hpp"
 
 using namespace pingstats;
 using Catch::Approx;

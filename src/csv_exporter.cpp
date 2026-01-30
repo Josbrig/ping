@@ -48,14 +48,15 @@ void write_snapshots_csv_append(const std::string& path,
 
     const std::string ts = format_timestamp(timestamp);
     for (const auto& snap : snapshots) {
-        ofs << '"' << ts << "",""
-            << snap.host << "\",""
-            << snap.count << "",""
-            << snap.loss_ratio << "",""
-            << snap.min_ms << "",""
-            << snap.max_ms << "",""
-            << snap.mean_ms << "",""
-            << snap.median_ms << "\n";
+        ofs << '"' << ts << '"'
+            << ',' << '"' << snap.host << '"'
+            << ',' << snap.count
+            << ',' << snap.loss_ratio
+            << ',' << snap.min_ms
+            << ',' << snap.max_ms
+            << ',' << snap.mean_ms
+            << ',' << snap.median_ms
+            << '\n';
     }
 }
 

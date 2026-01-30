@@ -39,10 +39,13 @@ catch_discover_tests(ping_workflow_tests)
 add_executable(integration_ping_tests
     integration_ping_tests.cpp
     ../src/platform_ping_backend_factory.cpp
+    ../src/platform_ping_backend_windows.cpp
 )
 
 target_link_libraries(integration_ping_tests PRIVATE
     Catch2::Catch2WithMain
+    iphlpapi
+    ws2_32
 )
 
 target_include_directories(integration_ping_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)

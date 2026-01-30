@@ -16,6 +16,11 @@ elseif(UNIX)
     target_sources(pingstats PRIVATE
         platform_ping_backend_linux.cpp
     )
+elseif(WIN32)
+    target_sources(pingstats PRIVATE
+        platform_ping_backend_windows.cpp
+    )
+    target_link_libraries(pingstats PRIVATE iphlpapi ws2_32)
 endif()
 
 target_include_directories(pingstats PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)

@@ -1,1 +1,7 @@
 build
+# runtime/export outputs
+*.csv
+*.json
+runtime_windows.*
+runtime_unix.*
+test.csv

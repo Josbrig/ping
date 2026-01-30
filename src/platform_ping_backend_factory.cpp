@@ -4,6 +4,8 @@
 #include "platform_ping_backend_macos.hpp"
 #elif defined(__linux__)
 #include "platform_ping_backend_linux.hpp"
+#elif defined(_WIN32)
+#include "platform_ping_backend_windows.hpp"
 #endif
 
 #include <memory>
@@ -28,6 +30,8 @@ std::unique_ptr<PlatformPingBackend> make_platform_ping_backend() {
     return std::make_unique<MacOsPingBackend>();
 #elif defined(__linux__)
     return std::make_unique<LinuxPingBackend>();
+#elif defined(_WIN32)
+    return std::make_unique<WindowsPingBackend>();
 #else
     return std::make_unique<NullPingBackend>();
 #endif

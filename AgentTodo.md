@@ -12,7 +12,7 @@
 - [X] ConsoleView implementieren (Tabellenansicht, Zeitverlaufsgrafik, Histogramm-Ausgabe, regelmäßige Aktualisierung)
 - [X] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)
 - [X] CSV-Export der Statistiken implementieren
-- [ ] JSON-Export der Statistiken implementieren
+- [X] JSON-Export der Statistiken implementieren
 - [ ] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen
 - [ ] Integrationstests für Ping-Workflow mit mehreren Zielen erstellen
 - [ ] CMake-Targets für Tests definieren und automatisierte Testausführung einrichten

@@ -1,8 +1,23 @@
+include(FetchContent)
+
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY http://raspirepo/mirrors/Catch2.git
+    GIT_TAG v3.5.3
+)
+FetchContent_MakeAvailable(Catch2)
+
 add_executable(statistics_aggregator_tests
     statistics_aggregator_tests.cpp
-    ../src/statistics_aggregator.cpp
+)
+
+target_link_libraries(statistics_aggregator_tests PRIVATE
+    Catch2::Catch2WithMain
+    pingstats
 )
 
 target_include_directories(statistics_aggregator_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
-add_test(NAME statistics_aggregator_tests COMMAND statistics_aggregator_tests)
+include(CTest)
+include(Catch)
+catch_discover_tests(statistics_aggregator_tests)

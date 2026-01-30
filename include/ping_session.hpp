@@ -42,5 +42,9 @@ protected:
     std::shared_ptr<StatisticsAggregator> aggregator_;
 };
 
+std::unique_ptr<PingSession> make_ping_session(TargetConfig target,
+                                               std::shared_ptr<PlatformPingBackend> backend,
+                                               std::shared_ptr<StatisticsAggregator> aggregator);
+
 }  // namespace pingstats
 

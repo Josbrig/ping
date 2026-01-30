@@ -7,7 +7,7 @@
 - [X] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
 - [X] ICMP-Ping-Basisfunktion auf macOS anpassen
 - [X] Portierbare PlatformPingBackend-Abstraktion für Linux/macOS/WSL/Cygwin/MinGW implementieren
-- [ ] PingSession implementieren (periodisches Pingen, Weitergabe der Messdaten an StatisticsAggregator)
+- [X] PingSession implementieren (periodisches Pingen, Weitergabe der Messdaten an StatisticsAggregator)
 - [ ] StatisticsAggregator implementieren (Min/Max/Mittelwert/Median, Paketverlust, Histogramm-Buckets, Zeitreihenpuffer)
 - [ ] ConsoleView implementieren (Tabellenansicht, Zeitverlaufsgrafik, Histogramm-Ausgabe, regelmäßige Aktualisierung)
 - [ ] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)

@@ -1,7 +1,17 @@
 target_sources(pingstats PRIVATE
     main.cpp
-    platform_ping_backend_linux.cpp
+    platform_ping_backend_factory.cpp
 )
+
+if(APPLE)
+    target_sources(pingstats PRIVATE
+        platform_ping_backend_macos.cpp
+    )
+elseif(UNIX)
+    target_sources(pingstats PRIVATE
+        platform_ping_backend_linux.cpp
+    )
+endif()
 
 target_include_directories(pingstats PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 

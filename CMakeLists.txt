@@ -6,9 +6,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(CTest)
+enable_testing()
+
 add_executable(pingstats)
 
 target_include_directories(pingstats PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+
+add_custom_target(run_tests
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Running all tests via ctest"
+)

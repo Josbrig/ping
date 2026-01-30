@@ -3,6 +3,7 @@ target_sources(pingstats PRIVATE
     platform_ping_backend_factory.cpp
     ping_session.cpp
     statistics_aggregator.cpp
+    console_view_impl.cpp
 )
 
 if(APPLE)

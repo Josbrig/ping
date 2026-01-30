@@ -1,4 +1,7 @@
-target_sources(pingstats PRIVATE main.cpp)
+target_sources(pingstats PRIVATE
+    main.cpp
+    platform_ping_backend_linux.cpp
+)
 
 target_include_directories(pingstats PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 

@@ -4,8 +4,8 @@
 - [X] Zentrale Architekturdatei erstellen (docs/architecture.md) mit Beschreibung der Module
 - [X] Schnittstellen für PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend entwerfen
 - [X] CMakeLists.txt für Hauptprojekt und ggf. Unterverzeichnisse erstellen
-- [ ] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
-- [ ] ICMP-Ping-Basisfunktion auf macOS anpassen
+- [X] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
+- [X] ICMP-Ping-Basisfunktion auf macOS anpassen
 - [ ] Portierbare PlatformPingBackend-Abstraktion für Linux/macOS/WSL/Cygwin/MinGW implementieren
 - [ ] PingSession implementieren (periodisches Pingen, Weitergabe der Messdaten an StatisticsAggregator)
 - [ ] StatisticsAggregator implementieren (Min/Max/Mittelwert/Median, Paketverlust, Histogramm-Buckets, Zeitreihenpuffer)

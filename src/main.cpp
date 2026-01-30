@@ -13,6 +13,7 @@
 #include "config.hpp"
 #include "console_view_impl.hpp"
 #include "csv_exporter.hpp"
+#include "json_exporter.hpp"
 #include "ping_session.hpp"
 #include "platform_ping_backend_factory.hpp"
 #include "statistics_aggregator_impl.hpp"
@@ -214,7 +215,8 @@ int run(int argc, char** argv) {
         CsvExporterLoop csv_loop{aggregator,
                                  opts.output_file.value_or("pingstats.csv"),
                                  kDefaultExportPeriod};
-        const bool enable_export = effective_format == OutputFormat::Csv;
+        const bool enable_csv_export = effective_format == OutputFormat::Csv;
+        const bool enable_json_export = effective_format == OutputFormat::Json;
 
         std::vector<SessionBundle> sessions;
         sessions.reserve(targets.size());
@@ -230,7 +232,7 @@ int run(int argc, char** argv) {
             bundle.session->start();
         }
 
-        if (enable_export) {
+        if (enable_csv_export) {
             csv_loop.start();
         }
 
@@ -242,11 +244,14 @@ int run(int argc, char** argv) {
         std::getline(std::cin, line);
 
         view->stop();
-        if (enable_export) {
+        if (enable_csv_export) {
             csv_loop.stop();
             // Final snapshot write
             write_snapshots_csv_append(opts.output_file.value_or("pingstats.csv"),
                                        aggregator->snapshot_all());
+        } else if (enable_json_export) {
+            write_snapshots_json(opts.output_file.value_or("pingstats.json"),
+                                 aggregator->snapshot_all());
         }
         for (auto& bundle : sessions) {
             bundle.session->stop();

@@ -5,6 +5,7 @@ target_sources(pingstats PRIVATE
     statistics_aggregator.cpp
     console_view_impl.cpp
     csv_exporter.cpp
+    json_exporter.cpp
 )
 
 if(APPLE)

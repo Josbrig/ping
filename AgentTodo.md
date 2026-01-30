@@ -1,8 +1,8 @@
 # KI-Agenten TODO-Liste für das Ping-Statistik-Projekt
 
-- [ ] Projektgrundstruktur anlegen (CMake-Projekt, Ordnerstruktur src/include/tests/docs/plans)
-- [ ] Zentrale Architekturdatei erstellen (docs/architecture.md) mit Beschreibung der Module
-- [ ] Schnittstellen für PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend entwerfen
+- [x] Projektgrundstruktur anlegen (CMake-Projekt, Ordnerstruktur src/include/tests/docs/plans)
+- [X] Zentrale Architekturdatei erstellen (docs/architecture.md) mit Beschreibung der Module
+- [X] Schnittstellen für PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend entwerfen
 - [ ] CMakeLists.txt für Hauptprojekt und ggf. Unterverzeichnisse erstellen
 - [ ] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
 - [ ] ICMP-Ping-Basisfunktion auf macOS anpassen

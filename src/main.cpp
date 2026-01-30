@@ -12,6 +12,7 @@
 
 #include "config.hpp"
 #include "console_view_impl.hpp"
+#include "csv_exporter.hpp"
 #include "ping_session.hpp"
 #include "platform_ping_backend_factory.hpp"
 #include "statistics_aggregator_impl.hpp"
@@ -23,6 +24,7 @@ namespace {
 constexpr double kDefaultIntervalSeconds = 1.0;
 constexpr auto kDefaultRenderPeriod = std::chrono::milliseconds{500};
 constexpr std::string_view kVersion = "0.1.0";
+constexpr auto kDefaultExportPeriod = std::chrono::seconds{5};
 
 struct CliOptions {
     std::optional<double> interval_s;
@@ -118,6 +120,52 @@ struct SessionBundle {
     std::unique_ptr<PingSession> session;
 };
 
+class CsvExporterLoop {
+public:
+    CsvExporterLoop(std::shared_ptr<StatisticsAggregator> aggregator,
+                    std::string path,
+                    std::chrono::milliseconds period)
+        : aggregator_(std::move(aggregator)), path_(std::move(path)), period_(period)
+    {
+    }
+
+    void start()
+    {
+        if (running_) {
+            return;
+        }
+        running_ = true;
+        worker_ = std::thread([this]() {
+            while (running_) {
+                auto snaps = aggregator_->snapshot_all();
+                try {
+                    write_snapshots_csv_append(path_, snaps);
+                } catch (const std::exception& ex) {
+                    std::cerr << "CSV export error: " << ex.what() << std::endl;
+                }
+                std::this_thread::sleep_for(period_);
+            }
+        });
+    }
+
+    void stop()
+    {
+        running_ = false;
+        if (worker_.joinable()) {
+            worker_.join();
+        }
+    }
+
+    ~CsvExporterLoop() { stop(); }
+
+private:
+    std::shared_ptr<StatisticsAggregator> aggregator_;
+    std::string path_;
+    std::chrono::milliseconds period_;
+    std::atomic<bool> running_{false};
+    std::thread worker_;
+};
+
 }  // namespace
 
 int run(int argc, char** argv) {
@@ -163,6 +211,11 @@ int run(int argc, char** argv) {
 
         auto aggregator = make_statistics_aggregator();
 
+        CsvExporterLoop csv_loop{aggregator,
+                                 opts.output_file.value_or("pingstats.csv"),
+                                 kDefaultExportPeriod};
+        const bool enable_export = effective_format == OutputFormat::Csv;
+
         std::vector<SessionBundle> sessions;
         sessions.reserve(targets.size());
         for (auto& target : targets) {
@@ -177,6 +230,10 @@ int run(int argc, char** argv) {
             bundle.session->start();
         }
 
+        if (enable_export) {
+            csv_loop.start();
+        }
+
         auto view = make_console_view(aggregator);
         view->render_periodic(kDefaultRenderPeriod);
 
@@ -185,6 +242,12 @@ int run(int argc, char** argv) {
         std::getline(std::cin, line);
 
         view->stop();
+        if (enable_export) {
+            csv_loop.stop();
+            // Final snapshot write
+            write_snapshots_csv_append(opts.output_file.value_or("pingstats.csv"),
+                                       aggregator->snapshot_all());
+        }
         for (auto& bundle : sessions) {
             bundle.session->stop();
             if (bundle.backend) {

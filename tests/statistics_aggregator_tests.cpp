@@ -43,8 +43,8 @@ TEST_CASE("histogram bucket edges distribute counts")
     // Default boundaries: 10,20,50,100,200,500
     agg->add_sample("h", 5.0, true);    // bucket 0
     agg->add_sample("h", 10.0, true);   // boundary => bucket 1
-    agg->add_sample("h", 55.0, true);   // bucket 2 (50-100)
-    agg->add_sample("h", 500.0, true);  // boundary => bucket last
+    agg->add_sample("h", 55.0, true);   // bucket 3 (50-100)
+    agg->add_sample("h", 500.0, true);  // boundary => last bucket
     agg->add_sample("h", 800.0, true);  // last bucket overflow
 
     auto snap = agg->snapshot("h");
@@ -54,8 +54,8 @@ TEST_CASE("histogram bucket edges distribute counts")
     REQUIRE(snap.histogram_buckets[2].second == Approx(0.0));
     REQUIRE(snap.histogram_buckets[3].second == Approx(1.0));
     REQUIRE(snap.histogram_buckets[4].second == Approx(0.0));
-    REQUIRE(snap.histogram_buckets[5].second == Approx(1.0));
-    REQUIRE(snap.histogram_buckets[6].second == Approx(1.0));
+    REQUIRE(snap.histogram_buckets[5].second == Approx(0.0));
+    REQUIRE(snap.histogram_buckets[6].second == Approx(2.0));
 }
 
 TEST_CASE("reset clears stats")

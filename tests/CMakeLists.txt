@@ -35,3 +35,18 @@ target_link_libraries(ping_workflow_tests PRIVATE
 target_include_directories(ping_workflow_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 catch_discover_tests(ping_workflow_tests)
+
+add_executable(integration_ping_tests
+    integration_ping_tests.cpp
+    ../src/platform_ping_backend_factory.cpp
+)
+
+target_link_libraries(integration_ping_tests PRIVATE
+    Catch2::Catch2WithMain
+)
+
+target_include_directories(integration_ping_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
+target_compile_definitions(integration_ping_tests PRIVATE PINGSTATS_INTEGRATION_HOST="simbrig.eu")
+
+catch_discover_tests(integration_ping_tests)

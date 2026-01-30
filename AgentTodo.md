@@ -25,7 +25,7 @@
     - [ ] Cygwin (GCC)
     - [ ] MinGW (GCC/Clang)
     - [ ] Windows (MSVC)
-- [ ] Skripte oder Konfigurationen für plattformübergreifende Builds (Linux/macOS/WSL/Cygwin/MinGW) anlegen
+- [?] Skripte oder Konfigurationen für plattformübergreifende Builds (Linux/macOS/WSL/Cygwin/MinGW) anlegen
 - [ ] Laufzeittests mit Beispielzielen (8.8.8.8, 1.1.1.1, example.org) automatisiert ausführen und Ergebnisse protokollieren
 - [ ] Ergebnisse der Laufzeittests auswerten und in die weitere Optimierung von Performance und Robustheit einfließen lassen
 

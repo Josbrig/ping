@@ -8,20 +8,20 @@
 
 namespace pingstats {
 
-// Linux-spezifische Implementation des PlatformPingBackend für ICMP-Echo.
-// Thread-Safety: nicht threadsicher; Aufrufer synchronisieren parallele Zugriffe.
+// Linux-specific implementation of PlatformPingBackend for ICMP echo.
+// Thread-safety: not thread-safe; callers must synchronize concurrent access.
 class LinuxPingBackend final : public PlatformPingBackend {
 public:
     LinuxPingBackend();
     ~LinuxPingBackend() override;
 
-    // Initialisiert Raw-Socket-Ressourcen; wirft bei Fehlern eine Ausnahme.
+    // Initializes raw-socket resources; throws on errors.
     void initialize() override;
 
-    // Gibt Ressourcen frei; darf mehrfach aufgerufen werden.
+    // Releases resources; may be called multiple times.
     void shutdown() override;
 
-    // Sendet einen ICMP-Echo an host und wartet bis timeout. Gibt Erfolg und RTT in Millisekunden zurück.
+    // Sends an ICMP echo to host and waits until timeout. Returns success and RTT in milliseconds.
     PingResult send_ping(std::string_view host, std::chrono::milliseconds timeout) override;
 
     LinuxPingBackend(const LinuxPingBackend&) = delete;

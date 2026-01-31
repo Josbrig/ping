@@ -1,31 +1,31 @@
-# KI-Agenten TODO-Liste für das Ping-Statistik-Projekt
+# AI Agent TODO List for the Ping Statistics Project
 
-- [x] Projektgrundstruktur anlegen (CMake-Projekt, Ordnerstruktur src/include/tests/docs/plans)
-- [X] Zentrale Architekturdatei erstellen (docs/architecture.md) mit Beschreibung der Module
-- [X] Schnittstellen für PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend entwerfen
-- [X] CMakeLists.txt für Hauptprojekt und ggf. Unterverzeichnisse erstellen
-- [X] ICMP-Ping-Basisfunktion für ein Ziel auf Linux implementieren
-- [X] ICMP-Ping-Basisfunktion auf macOS anpassen
-- [X] Portierbare PlatformPingBackend-Abstraktion für Linux/macOS/WSL/Cygwin/MinGW implementieren
-- [X] PingSession implementieren (periodisches Pingen, Weitergabe der Messdaten an StatisticsAggregator)
-- [X] StatisticsAggregator implementieren (Min/Max/Mittelwert/Median, Paketverlust, Histogramm-Buckets, Zeitreihenpuffer)
-- [X] ConsoleView implementieren (Tabellenansicht, Zeitverlaufsgrafik, Histogramm-Ausgabe, regelmäßige Aktualisierung)
-- [X] Kommandozeilen-Interface in main implementieren (Ziele, -i Intervall, --output-format, --output-file)
-- [X] CSV-Export der Statistiken implementieren
-- [X] JSON-Export der Statistiken implementieren
-- [X] Unit-Tests für Statistikberechnungen (Min/Max/Mean/Median, Histogramm) erstellen
-- [X] Integrationstests für Ping-Workflow mit mehreren Zielen erstellen
-- [X] CMake-Targets für Tests definieren und automatisierte Testausführung einrichten
-- [ ] Konsolen-Ausgaben mit der Beschreibung in README.md abgleichen und bei Bedarf anpassen
-- [ ] Build-Konfigurationen für Debug/Release für alle Zielplattformen testen
-  - Betriebssysteme mit zugehörigen Compilern:
-    - [ ] Linux (GCC, Clang)
-    - [ ] macOS (Clang)
-    - [ ] WSL (GCC, Clang)
-    - [ ] Cygwin (GCC)
-    - [ ] MinGW (GCC/Clang)
-    - [ ] Windows (MSVC)
-- [?] Skripte oder Konfigurationen für plattformübergreifende Builds (Linux/macOS/WSL/Cygwin/MinGW) anlegen
-- [X] Laufzeittests mit Beispielzielen (8.8.8.8, 1.1.1.1, example.org) automatisiert ausführen und Ergebnisse protokollieren
-- [ ] Ergebnisse der Laufzeittests auswerten und in die weitere Optimierung von Performance und Robustheit einfließen lassen
+- [x] Set up base project structure (CMake project, folder layout src/include/tests/docs/plans)
+- [X] Create central architecture file ([`docs/architecture.md`](docs/architecture.md)) describing the modules
+- [X] Design interfaces for PingSession, StatisticsAggregator, TargetConfig, ConsoleView, PlatformPingBackend
+- [X] Create CMakeLists.txt for the main project and subdirectories if needed
+- [X] Implement basic ICMP ping for a single target on Linux
+- [X] Adapt basic ICMP ping for macOS
+- [X] Implement portable PlatformPingBackend abstraction for Linux/macOS/WSL/Cygwin/MinGW
+- [X] Implement PingSession (periodic pinging, forwarding measurements to StatisticsAggregator)
+- [X] Implement StatisticsAggregator (min/max/mean/median, packet loss, histogram buckets, time-series buffer)
+- [X] Implement ConsoleView (table view, time-series graphic, histogram output, periodic refresh)
+- [X] Implement command-line interface in main (targets, -i interval, --output-format, --output-file)
+- [X] Implement CSV export of statistics
+- [X] Implement JSON export of statistics
+- [X] Create unit tests for statistical calculations (min/max/mean/median, histogram)
+- [X] Create integration tests for ping workflow with multiple targets
+- [X] Define CMake targets for tests and set up automated test execution
+- [ ] Align console output with the description in README.md and adjust if needed
+- [ ] Test build configurations for Debug/Release on all target platforms
+   - Operating systems with corresponding compilers:
+     - [ ] Linux (GCC, Clang)
+     - [ ] macOS (Clang)
+     - [ ] WSL (GCC, Clang)
+     - [ ] Cygwin (GCC)
+     - [ ] MinGW (GCC/Clang)
+     - [ ] Windows (MSVC)
+- [?] Add scripts or configurations for cross-platform builds (Linux/macOS/WSL/Cygwin/MinGW)
+- [X] Run automated runtime tests with sample targets (8.8.8.8, 1.1.1.1, example.org) and log results
+- [ ] Evaluate runtime test results and feed them into further performance and robustness tuning
 

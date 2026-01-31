@@ -1,19 +1,19 @@
 # Prompt Report 0001 – 2026-01-30 15:39 – Windows Null Backend causing 100% loss
 
-## Beobachtung
-- Manuelle Pings zu `dan-o-mat` und `megagamer` funktionieren mit 0% Verlust.
-- Lauf mit `scripts/test_hil.bat` zeigt 100% Paketverlust (keine RTTs) und endlose Ausgabe.
+## Observation
+- Manual pings to `dan-o-mat` and `megagamer` work with 0% loss.
+- Running `scripts/test_hil.bat` shows 100% packet loss (no RTTs) and endless output.
 
-## Ursache
-- Auf Windows liefert `make_platform_ping_backend()` in [`src/platform_ping_backend_factory.cpp`](src/platform_ping_backend_factory.cpp:1) ein `NullPingBackend`, weil nur macOS (`__APPLE__`) und Linux (`__linux__`) unterstützt werden. Auf anderen Plattformen (Windows) wird ein Stub-Backend genutzt, dessen `send_ping` immer `success=false` zurückgibt.
+## Cause
+- On Windows, `make_platform_ping_backend()` in [`src/platform_ping_backend_factory.cpp`](src/platform_ping_backend_factory.cpp:1) returns a `NullPingBackend` because only macOS (`__APPLE__`) and Linux (`__linux__`) are supported. On other platforms (Windows), a stub backend is used whose `send_ping` always returns `success=false`.
 
-## Implikation
-- pingstats kann unter Windows mit dem aktuellen Backend keine echten ICMP-Pings senden; alle Ziele zeigen 100% Loss, unabhängig von tatsächlicher Erreichbarkeit.
+## Implication
+- With the current backend, pingstats cannot send real ICMP pings on Windows; all targets show 100% loss regardless of actual reachability.
 
-## Vorschlag zur Behebung
-1) Windows-Backend implementieren (z. B. mit IcmpSendEcho oder Raw Sockets) und im Factory-Guard ergänzen (WIN32).
-2) Alternativ temporär: für Windows über WSL-Ausführung dokumentieren oder einen externen Ping-Aufruf nutzen, bis ein natives Backend verfügbar ist.
+## Proposed Fix
+1) Implement a Windows backend (e.g., using IcmpSendEcho or raw sockets) and add it to the factory guard (WIN32).
+2) Alternatively, temporarily document running on Windows via WSL or using an external ping until a native backend is available.
 
-## Nächste Schritte (empfohlen)
-- Priorität: Backend-Unterstützung für Windows ergänzen; Factory um WIN32-Zweig erweitern.
-- Bis dahin: README/Skripte kennzeichnen, dass unter Windows aktuell nur Stub aktiv ist und reale Pings nicht funktionieren.
+## Next Steps (recommended)
+- Priority: add backend support for Windows; extend the factory with a WIN32 branch.
+- Until then: mark in README/scripts that on Windows only the stub is active and real pings do not work.

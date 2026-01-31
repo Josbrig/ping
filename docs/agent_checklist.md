@@ -1,99 +1,99 @@
-# **Agenten‑Checkliste (für jeden KI‑Agenten, bei jedem Prompt)**
+# **Agent Checklist (for every AI agent, for every prompt)**
 
-## **1. Vor dem Start**
-- [ ] Habe ich die Datei **AGENTEN_RULES.md** gelesen?  
-- [ ] Kenne ich die Projektstruktur (Prompts, Reports, TODO, Konzepte, Dokumentation, Manuals, Skripte)?  
-- [ ] Weiß ich, dass **alles archiviert werden muss**?
+## **1. Before Starting**
+- [ ] Have I read **AGENTEN_RULES.md**?  
+- [ ] Do I know the project structure (Prompts, Reports, TODO, Concepts, Documentation, Manuals, Scripts)?  
+- [ ] Do I know that **everything must be archived**?
 
 ---
 
-## **2. Prompt‑Verarbeitung**
-- [ ] Prompt vollständig gelesen  
-- [ ] Verstanden, was verlangt wird  
-- [ ] Falls unklar: **Rückfrage stellen**  
-- [ ] Archivdatei anlegen unter `docs/prompts/`  
-- [ ] Archivdatei enthält:
+## **2. Prompt Processing**
+- [ ] Prompt fully read  
+- [ ] Understood what is required  
+- [ ] If unclear: **ask a question**  
+- [ ] Create an archive file under `docs/prompts/`  
+- [ ] Archive file contains:
   - [ ] Prompt  
-  - [ ] Rückfragen  
-  - [ ] Antworten  
-  - [ ] Ergebnisse  
-  - [ ] Referenzen auf erzeugte Dateien  
+  - [ ] Questions  
+  - [ ] Answers  
+  - [ ] Results  
+  - [ ] References to generated files  
 
 ---
 
-## **3. Aufgabenbearbeitung**
-- [ ] Prüfen, ob ein TODO‑Punkt betroffen ist  
-- [ ] Falls ja: Punktnummer notieren  
-- [ ] Aufgabe in **klaren Schritten** ausführen  
-- [ ] Keine Datei überschreiben ohne explizite Anweisung  
-- [ ] Ergebnisse reproduzierbar halten  
-- [ ] Falls Informationen fehlen → Rückfrage  
+## **3. Task Execution**
+- [ ] Check whether a TODO item is affected  
+- [ ] If yes: note the item number  
+- [ ] Execute the task in **clear steps**  
+- [ ] Do not overwrite any file without explicit instruction  
+- [ ] Keep results reproducible  
+- [ ] If information is missing → ask  
 
 ---
 
-## **4. Dateierstellung**
-- [ ] Richtigen Ordner wählen:
+## **4. File Creation**
+- [ ] Choose the correct folder:
   - Prompts → `docs/prompts/`
   - Reports → `docs/reports/`
   - TODO → `docs/todo/`
-  - Konzepte → `docs/concepts/`
-  - Dokumentation → `docs/documentation/`
+  - Concepts → `docs/concepts/`
+  - Documentation → `docs/documentation/`
   - Manuals → `docs/manuals/`
-  - Projekt‑Skripte → `scripts/project/`
-  - Benutzer‑Skripte → `scripts/user/`
-- [ ] Format korrekt?
-  - Markdown für alles Textuelle  
-  - Skripte in `.sh`, `.ps1`, `.py`, `.bat`  
-  - Konfiguration in `.json`, `.yaml`, `.toml`  
-- [ ] Datei im Report referenzieren  
+  - Project scripts → `scripts/project/`
+  - User scripts → `scripts/user/`
+- [ ] Is the format correct?
+  - Markdown for all textual content  
+  - Scripts in `.sh`, `.ps1`, `.py`, `.bat`  
+  - Configuration in `.json`, `.yaml`, `.toml`  
+- [ ] Reference the file in the report  
 
 ---
 
 ## **5. Reports**
-- [ ] Report erstellen, wenn:
-  - [ ] Aufgabe abgeschlossen  
-  - [ ] Datei erzeugt  
-  - [ ] TODO aktualisiert  
-  - [ ] Konzept erstellt  
-  - [ ] Problem aufgetreten  
-- [ ] Report speichern unter `docs/reports/`  
-- [ ] Report enthält:
-  - [ ] Zweck  
-  - [ ] Schritte  
-  - [ ] Ergebnisse  
-  - [ ] erzeugte Dateien  
-  - [ ] aktualisierte TODO‑Punkte  
+- [ ] Create a report when:
+  - [ ] Task completed  
+  - [ ] File created  
+  - [ ] TODO updated  
+  - [ ] Concept created  
+  - [ ] Problem occurred  
+- [ ] Save the report under `docs/reports/`  
+- [ ] Report contains:
+  - [ ] Purpose  
+  - [ ] Steps  
+  - [ ] Results  
+  - [ ] Generated files  
+  - [ ] Updated TODO items  
 
 ---
 
-## **6. TODO‑Listen**
-- [ ] TODO‑Datei öffnen  
-- [ ] Struktur beachten:
-  - Hauptpunkte: 1, 2, 3  
-  - Unterpunkte: A, B, C  
-  - Unter‑Unterpunkte: I, II, III  
-- [ ] Neue Punkte dürfen hinzugefügt werden  
-- [ ] Keine Punkte löschen  
-- [ ] Punkt abhaken, wenn:
-  - [ ] Aufgabe vollständig erledigt  
-  - [ ] alle Unterpunkte erledigt  
-  - [ ] Report erstellt  
-- [ ] Änderungen dokumentieren  
+## **6. TODO Lists**
+- [ ] Open the TODO file  
+- [ ] Follow the structure:
+  - Main items: 1, 2, 3  
+  - Sub-items: A, B, C  
+  - Sub-sub-items: I, II, III  
+- [ ] New items may be added  
+- [ ] No items may be deleted  
+- [ ] Check off an item when:
+  - [ ] Task fully completed  
+  - [ ] All sub-items completed  
+  - [ ] Report created  
+- [ ] Document changes  
 
 ---
 
-## **7. Selbstkontrolle**
-- [ ] Habe ich alles dokumentiert?  
-- [ ] Habe ich nichts überschrieben?  
-- [ ] Ist die Ausgabe reproduzierbar?  
-- [ ] Sind alle Dateien am richtigen Ort?  
-- [ ] Sind alle TODO‑Punkte korrekt aktualisiert?  
-- [ ] Ist der Report vollständig?  
+## **7. Self-Check**
+- [ ] Have I documented everything?  
+- [ ] Have I overwritten nothing?  
+- [ ] Is the output reproducible?  
+- [ ] Are all files in the right location?  
+- [ ] Are all TODO items correctly updated?  
+- [ ] Is the report complete?  
 
 ---
 
-## **8. Abschluss**
-- [ ] Prompt‑Archivdatei finalisieren  
-- [ ] Report finalisieren  
-- [ ] TODO‑Liste aktualisieren  
-- [ ] Fertig melden  
+## **8. Finish**
+- [ ] Finalize the prompt archive file  
+- [ ] Finalize the report  
+- [ ] Update the TODO list  
+- [ ] Mark as done  

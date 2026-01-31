@@ -9,8 +9,10 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/include \
                           @CMAKE_CURRENT_SOURCE_DIR@/src \
                           @CMAKE_CURRENT_SOURCE_DIR@/README.md \
                           @CMAKE_CURRENT_SOURCE_DIR@/docs/documentation/mainpage.md \
-                          @CMAKE_CURRENT_SOURCE_DIR@/docs/documentation/src_overview.md
-FILE_PATTERNS          = *.hpp *.cpp *.md
+                          @CMAKE_CURRENT_SOURCE_DIR@/docs/documentation/src_overview.md \
+                          @CMAKE_CURRENT_SOURCE_DIR@/CMakeLists.txt
+FILE_PATTERNS          = *.hpp *.cpp *.md CMakeLists.txt *.cmake
+EXTENSION_MAPPING      = CMakeLists.txt=cmake cmake=cmake
 RECURSIVE              = YES
 
 EXTRACT_ALL            = YES

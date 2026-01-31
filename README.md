@@ -1,66 +1,67 @@
-# Projektübersicht
+```markdown
+# Project Overview
 
-Dieses Projekt stellt ein plattformübergreifendes Ping-Programm bereit, das Langzeitstatistiken über die Erreichbarkeit und Antwortzeiten einer oder mehrerer Netzwerkziele sammelt. Ziel ist eine zuverlässige, kontinuierliche Überwachung mit aussagekräftigen Kennzahlen und Visualisierungen der Latenz über längere Zeiträume.
+This project provides a cross-platform ping tool that collects long-term statistics on the reachability and response times of one or more network targets. The goal is reliable, continuous monitoring with meaningful metrics and visualizations of latency over extended periods of time.
 
-Das Programm wird in C++20 entwickelt und mit CMake gebaut. Es ist darauf ausgelegt, unter Linux, macOS, Windows WSL, Windows Cygwin und Windows MinGW kompiliert und ausgeführt werden zu können. Dabei werden die jeweiligen betriebssystemspezifischen Anforderungen an ICMP-Pakete berücksichtigt.
+The program is implemented in C++20 and built with CMake. It is designed to compile and run on Linux, macOS, Windows WSL, Windows Cygwin, and Windows MinGW. Platform-specific requirements for ICMP packets on each operating system are taken into account.
 
-# Hauptfunktionen
+# Key Features
 
-- Kontinuierliches Senden von ICMP-Pings an ein oder mehrere Ziele in konfigurierbaren Intervallen.
-- Erfassung und Auswertung der Antwortzeiten jeder einzelnen Ping-Antwort.
-- Individuelle Statistiken pro IP-Adresse oder Hostname (pro Ziel getrennte Auswertung).
-- Darstellung eines zeitlichen Verlaufs der Antwortzeiten (z. B. als einfache Textgrafik / Latenzkurve in der Konsole).
-- Erstellung eines Histogramms der Ping-Antwortzeiten, um die Verteilung der Latenzen zu visualisieren.
-- Berechnung von Minimum, Maximum, Mittelwert und Median pro Ziel auf Basis der bisher beobachteten Antworten.
-- Laufende Aktualisierung der Messung und Statistik in quasi Echtzeit: Die Konsole wird in regelmäßigen Abständen aktualisiert, solange das Programm läuft.
-- Gleichzeitige Überwachung mehrerer Ziele: Jedes Ziel wird in einer eigenen Sitzung gemessen und in der Ausgabe klar getrennt dargestellt.
+- Continuous sending of ICMP echo requests (pings) to one or more targets at configurable intervals.
+- Collection and analysis of the response time of each individual ping reply.
+- Per-target statistics for each IP address or hostname (separate evaluation per destination).
+- Display of the response times over time (e.g., as a simple text graph / latency curve in the console).
+- Creation of a histogram of ping response times to visualize the distribution of latencies.
+- Calculation of minimum, maximum, mean, and median per target based on all observed responses so far.
+- Ongoing measurement and statistics updates in near real time: the console is refreshed at regular intervals as long as the program is running.
+- Simultaneous monitoring of multiple targets: each target is measured in its own session and clearly separated in the output.
 
-# Systemvoraussetzungen
+# System Requirements
 
-## Allgemeines
+## General
 
-- C++20-fähiger Compiler (z. B. GCC, Clang, MSVC bzw. MinGW mit C++20-Unterstützung).
-- CMake in einer aktuellen Version, empfohlen ab 3.20.
-- Netzwerkzugriff auf die zu überwachenden Ziele.
-- Berechtigungen zum Senden von ICMP-Echo-Requests (Ping). Je nach Plattform und Konfiguration können erhöhte Rechte erforderlich sein (z. B. root unter Linux, Administratorrechte unter Windows oder entsprechende Capabilities wie `CAP_NET_RAW`).
+- C++20-capable compiler (e.g., GCC, Clang, MSVC, or MinGW with C++20 support).
+- CMake in a recent version, recommended 3.20 or later.
+- Network access to the monitored targets.
+- Permissions to send ICMP echo requests (ping). Depending on platform and configuration, elevated privileges may be required (e.g., root on Linux, administrator privileges on Windows, or appropriate capabilities such as `CAP_NET_RAW`).
 
 ## Linux
 
-- Linux-Distribution mit installiertem C++20-Compiler (z. B. `g++` oder `clang++`).
+- Linux distribution with an installed C++20 compiler (e.g., `g++` or `clang++`).
 - CMake ≥ 3.20.
-- Ausreichende Rechte für ICMP (z. B. Ausführung mit `sudo` oder Setzen von `CAP_NET_RAW` für das Binärprogramm).
+- Sufficient ICMP permissions (e.g., running with `sudo` or setting `CAP_NET_RAW` on the binary).
 
 ## macOS
 
-- Aktuelle Xcode-Toolchain bzw. Command Line Tools mit C++20-Unterstützung.
-- CMake ≥ 3.20 (installiert z. B. über Homebrew oder MacPorts).
-- Ausführung in einer Terminalumgebung mit ausreichenden Rechten für ICMP-Pakete.
+- Recent Xcode toolchain or Command Line Tools with C++20 support.
+- CMake ≥ 3.20 (installed, for example, via Homebrew or MacPorts).
+- Execution in a terminal environment with sufficient privileges for ICMP packets.
 
 ## Windows WSL
 
-- Windows mit installiertem Windows Subsystem for Linux (WSL oder WSL2).
-- Linux-Umgebung in WSL mit C++20-Compiler und CMake ≥ 3.20.
-- ICMP-Berechtigungen innerhalb der WSL-Distribution (ggf. `sudo`).
+- Windows with Windows Subsystem for Linux (WSL or WSL2) installed.
+- Linux environment in WSL with a C++20 compiler and CMake ≥ 3.20.
+- ICMP permissions inside the WSL distribution (possibly `sudo`).
 
 ## Windows Cygwin
 
-- Cygwin-Installation mit C++20-fähigem Compiler (z. B. `g++` im Cygwin-Paket).
-- CMake ≥ 3.20 als Cygwin-Paket.
-- Ausführung im Cygwin-Terminal mit den für ICMP erforderlichen Rechten.
+- Cygwin installation with a C++20-capable compiler (e.g., `g++` from the Cygwin packages).
+- CMake ≥ 3.20 as a Cygwin package.
+- Execution in a Cygwin terminal with the permissions required for ICMP.
 
 ## Windows MinGW
 
-- MinGW- oder MSYS2-Umgebung mit C++20-fähigem Compiler (z. B. `g++` aus MinGW oder `clang++`).
-- CMake ≥ 3.20 (z. B. als MSYS2-Paket).
-- Ausführung in der entsprechenden Shell (MSYS2/MinGW) mit Zugriff auf das Netzwerk und gegebenenfalls Administratorrechten, falls ICMP dies erfordert.
+- MinGW or MSYS2 environment with a C++20-capable compiler (e.g., `g++` from MinGW or `clang++`).
+- CMake ≥ 3.20 (e.g., as an MSYS2 package).
+- Execution in the corresponding shell (MSYS2/MinGW) with network access and, if necessary, administrator privileges if ICMP requires them.
 
 # Installation
 
-Die folgenden Schritte beschreiben einen typischen Build mit CMake. Der genaue Ablauf kann je nach Umgebung (Generator, Pfade, Compiler) variieren, das Grundprinzip bleibt jedoch gleich.
+The following steps describe a typical CMake-based build. The exact process may vary depending on the environment (generator, paths, compiler), but the basic principle remains the same.
 
-## Unix-artige Systeme (Linux, macOS, WSL)
+## Unix-like Systems (Linux, macOS, WSL)
 
-Im Projektverzeichnis:
+In the project directory:
 
 ```bash
 mkdir -p build
@@ -68,18 +69,18 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-Für einen Debug-Build kann der Build-Typ entsprechend angepasst werden:
+For a debug build, adjust the build type accordingly:
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Je nach verwendetem Generator (z. B. Ninja, Makefiles) werden die passenden Build-Werkzeuge automatisch aufgerufen.
+Depending on the chosen generator (e.g., Ninja, Makefiles), the appropriate build tools are invoked automatically.
 
 ## Windows (Cygwin / MinGW)
 
-Im Projektverzeichnis, aus einer Cygwin- bzw. MSYS2/MinGW-Shell heraus:
+In the project directory, from a Cygwin or MSYS2/MinGW shell:
 
 ```bash
 mkdir -p build
@@ -87,147 +88,148 @@ cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-Für Debug-Builds entsprechend:
+For debug builds:
 
 ```bash
 cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Sofern ein anderer Generator (z. B. Ninja) bevorzugt wird, kann dieser über `-G` angegeben werden.
+If a different generator (e.g., Ninja) is preferred, it can be specified via `-G`.
 
-# Verwendung
+# Usage
 
-Im Folgenden wird beispielhaft davon ausgegangen, dass das erzeugte Programm [`pingstats`](build/pingstats) heißt und sich nach dem Build im `build`-Verzeichnis befindet.
+In the following, we assume that the resulting binary is called [`pingstats`](build/pingstats) and is located in the `build` directory after the build.
 
-Die allgemeine Aufrufstruktur lautet:
+The general invocation pattern is:
 
 ```bash
-./build/pingstats [Optionen] <ziel1> [ziel2 ...]
+./build/pingstats [options] <target1> [target2 ...]
 ```
 
-Typische Ziele sind IP-Adressen oder Hostnamen, etwa `8.8.8.8` oder `example.org`.
+Typical targets are IP addresses or hostnames, such as `8.8.8.8` or `example.org`.
 
-## Einfaches Beispiel: Einzelnes Ziel pingen
+## Simple Example: Ping a Single Target
 
-Kontinuierliches Pingen eines einzelnen Ziels mit Standardintervall (z. B. 1 Sekunde):
+Continuous pinging of a single target with the default interval (e.g., 1 second):
 
 ```bash
 ./build/pingstats 8.8.8.8
 ```
 
-Die Messung läuft, bis der Benutzer sie explizit abbricht (z. B. mit `Strg+C`). Statistik und Anzeige werden fortlaufend aktualisiert.
+The measurement continues until the user explicitly stops it (e.g., with `Ctrl+C`). Statistics and display are updated continuously.
 
-## Mehrere Ziele parallel überwachen
+## Monitor Multiple Targets in Parallel
 
-Gleichzeitige Überwachung mehrerer IP-Adressen oder Hosts:
+Simultaneous monitoring of multiple IP addresses or hosts:
 
 ```bash
 ./build/pingstats 8.8.8.8 1.1.1.1 example.org
 ```
 
-Für jedes Ziel wird intern eine eigene Sitzung geführt, und die Ausgabe zeigt getrennte Statistiken pro Adresse/Host.
+An internal session is created for each target, and the output shows separate statistics per address/host.
 
-## Intervall in Sekunden angeben
+## Specify the Interval in Seconds
 
-Mit einer Option zur Intervallsteuerung (beispielhaft `-i` in Sekunden):
+With an option to control the interval (for example, `-i` in seconds):
 
 ```bash
 ./build/pingstats -i 2 8.8.8.8 1.1.1.1
 ```
 
-In diesem Beispiel werden alle angegebenen Ziele alle 2 Sekunden angepingt. Das Intervall wirkt sich direkt auf die zeitliche Auflösung der Statistiken aus.
+In this example, all specified targets are pinged every 2 seconds. The interval directly influences the temporal resolution of the statistics.
 
-## Ausgabe in Datei (z. B. CSV oder JSON)
+## Write Output to a File (e.g., CSV or JSON)
 
-Zur späteren Auswertung können Statistiken regelmäßig oder am Programmende in eine Datei geschrieben werden, z. B. in CSV- oder JSON-Format. Eine mögliche Syntax (beispielhaft):
+For later analysis, statistics can be written periodically or at program termination to a file, for example in CSV or JSON format. One possible syntax (example):
 
 ```bash
 ./build/pingstats -i 1 --output-format=csv --output-file=pingstats.csv 8.8.8.8 1.1.1.1
 ```
 
-oder für JSON:
+or for JSON:
 
 ```bash
 ./build/pingstats -i 1 --output-format=json --output-file=pingstats.json 8.8.8.8 1.1.1.1
 ```
 
-Je nach Implementierung können die Dateien entweder fortlaufend aktualisiert oder am Ende der Messung geschrieben werden.
+Depending on the implementation, files may be updated continuously or written once at the end of the measurement.
 
-## Beispielhafte Konsolenausgabe
+## Example Console Output
 
-Während der Laufzeit zeigt das Programm fortlaufend aktualisierte Statistiken, typischerweise in tabellarischer Form. Ein vereinfachtes Beispiel könnte wie folgt aussehen:
+During runtime, the program displays continuously updated statistics, typically in tabular form. A simplified example might look as follows:
 
 ```text
-Zeitstempel: 2026-01-30 12:34:56
+Timestamp: 2026-01-30 12:34:56
 
-Ziel           Pakete   Min [ms]   Max [ms]   Mittel [ms]   Median [ms]   Verlust
--------------  -------  ---------  ---------  ------------  ------------  -------
-8.8.8.8           120       12.3       25.8          14.7          13.9     0.0 %
-1.1.1.1           120       10.8       21.2          13.5          12.7     0.0 %
-example.org       120       18.5       60.2          22.1          20.4     0.8 %
+Target         Packets   Min [ms]   Max [ms]   Mean [ms]   Median [ms]   Loss
+-------------  -------  ---------  ---------  ----------  ------------  -----
+8.8.8.8           120       12.3       25.8        14.7          13.9    0.0 %
+1.1.1.1           120       10.8       21.2        13.5          12.7    0.0 %
+example.org       120       18.5       60.2        22.1          20.4    0.8 %
 ```
 
-Zusätzlich kann in regelmäßigen Abständen ein einfacher zeitlicher Verlauf der letzten Messwerte je Ziel dargestellt werden, etwa als Textgrafik:
+In addition, a simple time series of the most recent measurements per target can be shown at regular intervals, for example as a text graph:
 
 ```text
-Zeitverlauf letzte 60 Sekunden (Latenz in ms, niedriger ist besser)
+Time series of the last 60 seconds (latency in ms, lower is better)
 
 8.8.8.8:     ▁▁▂▂▃▃▄▅▆▆▆▇█▇▆▅▄▃▂▂▁▁
 1.1.1.1:     ▁▁▁▂▂▂▃▄▅▅▆▆▇▇▆▅▄▃▂▂▁▁
 example.org: ▂▃▃▄▅▆▇██▇▆▅▄▃▃▂▂▁▁▁▁▁
 ```
 
-Das Histogramm der Antwortzeiten kann z. B. als Bucket-Liste ausgegeben werden:
+The histogram of response times can be printed, for example, as a bucket list:
 
 ```text
-Histogramm 8.8.8.8 (Antwortzeit in ms)
+Histogram 8.8.8.8 (response time in ms)
 
   0–10   ms:  5 ▓▓
  10–20   ms: 80 ██████████████████
  20–30   ms: 25 █████
  30–40   ms: 10 ██
- > 40   ms:  0 
+  > 40   ms:  0
 ```
 
-Die Messung läuft im Normalfall unbegrenzt und wird vom Benutzer beendet. Mit jedem Aktualisierungszyklus werden neue Ping-Ergebnisse in die Statistiken einbezogen, und die dargestellten Kennzahlen (Min/Max/Mittelwert/Median, Zeitverlauf, Histogramm) passen sich dynamisch an.
+By default, the measurement runs indefinitely and is terminated by the user. With each update cycle, new ping results are incorporated into the statistics, and the reported metrics (min/max/mean/median, time series, histogram) are adjusted dynamically.
 
-# Projektarchitektur
+# Project Architecture
 
-Die interne Struktur ist so angelegt, dass Messlogik, Statistikberechnung, Konfiguration, Ausgabe und Betriebssystemabstraktion klar getrennt sind. Dadurch bleibt der Code wartbar, erweiterbar und gut testbar.
+The internal structure is designed so that measurement logic, statistics calculation, configuration, output, and operating system abstraction are clearly separated. This keeps the code maintainable, extensible, and well testable.
 
-Zentrale Bausteine können unter anderem folgende Komponenten sein:
+Core building blocks include the following components:
 
-- [`PingSession`](src/ping_session.hpp:1) bzw. [`PingWorker`](src/ping_worker.hpp:1): Verantwortlich für das Ausführen von ICMP-Pings an ein einzelnes Ziel. Steuert das Sendeintervall, sammelt Rohmessdaten (Antwortzeiten, Paketverluste) und meldet diese an die Statistikkomponente.
-- [`StatisticsAggregator`](src/statistics_aggregator.hpp:1): Nimmt die Rohdaten der einzelnen Sitzungen entgegen, berechnet daraus Minimum, Maximum, Mittelwert und Median, führt Zähler für Paketverlust und erzeugt Datenstrukturen für Histogramme und zeitliche Verläufe (Ringpuffer für die letzten N Messwerte).
-- [`TargetConfig`](src/config.hpp:1): Repräsentiert ein einzelnes Ziel, inklusive IP/Hostname, Ping-Intervall und optionaler Ziel-spezifischer Einstellungen. Eine übergeordnete Konfigurationsinstanz verwaltet die Gesamtheit der Ziele.
-- [`ConsoleView`](src/console_view.hpp:1): Erzeugt in regelmäßigen Abständen die Konsolenausgabe. Liest den aktuellen Stand aus [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) aus und rendert Tabellen, Zeitverläufe und Histogramme, idealerweise ohne das Terminal mit übermäßigem Scrollen zu überfluten (z. B. durch Aktualisierung im bestehenden Bildschirmbereich).
-- [`PlatformPingBackend`](src/platform_ping_backend.hpp:1): Abstraktionsschicht für die betriebssystemspezifische ICMP-Implementierung. Kapselt Unterschiede in den verfügbaren Systemaufrufen, Sockets und Rechten unter Linux, macOS, WSL, Cygwin und MinGW.
+- [`PingSession`](src/ping_session.hpp:1) or [`PingWorker`](src/ping_worker.hpp:1): Responsible for executing ICMP pings to a single target. Controls the send interval, collects raw measurement data (response times, packet loss), and reports it to the statistics component.
+- [`StatisticsAggregator`](src/statistics_aggregator.hpp:1): Receives raw data from individual sessions, computes minimum, maximum, mean, and median, maintains counters for packet loss, and produces data structures for histograms and time series (ring buffers for the last N measurements).
+- [`TargetConfig`](src/config.hpp:1): Represents a single target, including IP/hostname, ping interval, and optional target-specific settings. A higher-level configuration instance manages the complete set of targets.
+- [`ConsoleView`](src/console_view.hpp:1): Produces console output at regular intervals. Reads the current state from [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) and renders tables, time series, and histograms, ideally without flooding the terminal with excessive scrolling (for example, by updating the existing screen area).
+- [`PlatformPingBackend`](src/platform_ping_backend.hpp:1): Abstraction layer for the operating-system-specific ICMP implementation. Encapsulates differences in the available system calls, sockets, and privileges on Linux, macOS, WSL, Cygwin, and MinGW.
 
-Der Programmstart (z. B. in einer Funktion [`main`](src/main.cpp:1)) liest Konfiguration und Kommandozeilenargumente ein, erzeugt für jedes Ziel eine [`TargetConfig`](src/config.hpp:1) und startet die zugehörigen [`PingSession`](src/ping_session.hpp:1)-Instanzen, typischerweise in eigenen Threads oder asynchronen Tasks. Jede Sitzung nutzt [`PlatformPingBackend`](src/platform_ping_backend.hpp:1), um ICMP-Pakete zu senden und Antwortzeiten zu messen, und übergibt die Ergebnisse an [`StatisticsAggregator`](src/statistics_aggregator.hpp:1).
+Program startup (for example, in a function [`main`](src/main.cpp:1)) reads the configuration and command-line arguments, creates a [`TargetConfig`](src/config.hpp:1) instance for each target, and launches the corresponding [`PingSession`](src/ping_session.hpp:1) instances, typically in separate threads or asynchronous tasks. Each session uses [`PlatformPingBackend`](src/platform_ping_backend.hpp:1) to send ICMP packets and measure response times, and forwards the results to [`StatisticsAggregator`](src/statistics_aggregator.hpp:1).
 
-Parallel dazu ruft [`ConsoleView`](src/console_view.hpp:1) in festen Intervallen den aktuellen Stand aus [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) ab und aktualisiert die Darstellung auf der Konsole. Auf diese Weise entsteht eine kontinuierlich aktualisierte Sicht auf die Laufzeitstatistik sämtlicher überwachten Ziele.
+In parallel, [`ConsoleView`](src/console_view.hpp:1) periodically retrieves the current state from [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) and refreshes the console display. This provides a continuously updated view of the runtime statistics for all monitored targets.
 
-# Beitragen / Erweiterung
+# Contributing / Extensibility
 
-Beiträge von außen sind willkommen, sofern sie die Zielsetzung des Projekts unterstützen: eine robuste, plattformübergreifende und gut nachvollziehbare Langzeit-Ping-Statistik.
+External contributions are welcome as long as they support the project’s objective: a robust, cross-platform, and easy-to-understand long-term ping statistics tool.
 
-Ein üblicher Workflow für Beiträge kann wie folgt aussehen:
+A typical contribution workflow can look as follows:
 
-1. Repository forken.
-2. Eigenen Branch für die Änderung anlegen (z. B. `feature/…` oder `bugfix/…`).
-3. Änderungen vornehmen, inklusive sinnvoller Tests bzw. manueller Prüfungen (z. B. auf mehreren Plattformen, sofern möglich).
-4. Code-Stil und Struktur an den bestehenden Code anpassen (klare Trennung von Logik, Statistik, Ausgabe und Plattformabstraktion).
-5. Merge Request bzw. Pull Request mit aussagekräftiger Beschreibung erstellen.
+1. Fork the repository.
+2. Create a dedicated branch for your change (e.g., `feature/...` or `bugfix/...`).
+3. Implement your changes, including appropriate tests and/or manual verification (for example, across multiple platforms, where possible).
+4. Align code style and structure with the existing codebase (clear separation of logic, statistics, output, and platform abstraction).
+5. Open a merge request or pull request with a concise, informative description.
 
-Mögliche sinnvolle Erweiterungen umfassen unter anderem:
+Potentially useful extensions include, among others:
 
-- Export von Metriken in ein Prometheus-kompatibles Format (z. B. über eine lokale HTTP-Schnittstelle oder eine Textdatei), um die Daten in externen Monitoring-Systemen weiterzuverarbeiten.
-- Web-basierte Benutzeroberfläche, die die Statistiken in Echtzeit in einem Browser visualisiert (z. B. mit Diagrammen für Latenzverlauf, Histogramme, Verfügbarkeit pro Ziel).
-- Zusätzliche Visualisierungen in der Konsole, etwa Prozentil-Darstellungen (P95, P99), Jitter-Berechnungen oder Heatmaps für Latenzen über die Zeit.
-- Unterstützung weiterer Protokolle und Checks neben ICMP, z. B. TCP-Port-Reachability, HTTP-GET-Latenzmessungen oder TLS-Handshake-Zeiten.
-- Konfigurationsdateien (z. B. YAML oder JSON), um eine größere Anzahl von Zielen und Einstellungen komfortabel zu verwalten.
+- Exporting metrics in a Prometheus-compatible format (for example via a local HTTP endpoint or a text file) to feed the data into external monitoring systems.
+- A web-based user interface that visualizes the statistics in real time in a browser (e.g., with charts for latency over time, histograms, and per-target availability).
+- Additional console visualizations, such as percentile views (P95, P99), jitter calculations, or heat maps of latency over time.
+- Support for additional protocols and checks beyond ICMP, e.g., TCP port reachability, HTTP GET latency measurements, or TLS handshake times.
+- Configuration files (e.g., YAML or JSON) to conveniently manage a larger number of targets and settings.
 
-# Lizenz
+# License
 
-MIT Licens
+MIT License
+```

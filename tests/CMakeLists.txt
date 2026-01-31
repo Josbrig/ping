@@ -3,7 +3,7 @@ include(FetchContent)
 
 FetchContent_Declare(
     Catch2
-    GIT_REPOSITORY http://raspirepo/mirrors/Catch2.git
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG v3.5.3
 )
 FetchContent_MakeAvailable(Catch2)

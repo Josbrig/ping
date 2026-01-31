@@ -78,7 +78,7 @@ PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view hos
         throw std::runtime_error("LinuxPingBackend not initialized");
     }
 
-    // Host auflösen
+    // Resolve host
     struct addrinfo hints {};
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_RAW;
@@ -89,7 +89,7 @@ PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view hos
         throw std::runtime_error(std::string("getaddrinfo failed: ") + ::gai_strerror(err));
     }
 
-    // Paket aufbauen
+    // Build packet
     std::uint8_t packet[kPacketSize]{};
     auto* hdr = reinterpret_cast<icmphdr*>(packet);
     hdr->type = ICMP_ECHO;
@@ -100,19 +100,19 @@ PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view hos
     hdr->checksum = 0;
     hdr->checksum = checksum(packet, kPacketSize);
 
-    // Zieladresse
+    // Destination address
     sockaddr_in dest{};
     std::memcpy(&dest, res->ai_addr, sizeof(sockaddr_in));
     ::freeaddrinfo(res);
 
-    // Sendezeitpunkt
+    // Send timestamp
     const auto t0 = std::chrono::steady_clock::now();
     const auto sent = ::sendto(sock_fd_, packet, kPacketSize, 0, reinterpret_cast<sockaddr*>(&dest), sizeof(dest));
     if (sent < 0 || static_cast<std::size_t>(sent) != kPacketSize) {
         throw std::runtime_error("sendto failed");
     }
 
-    // Warten mit select()
+    // Wait using select()
     fd_set readfds;
     FD_ZERO(&readfds);
     FD_SET(sock_fd_, &readfds);
@@ -121,10 +121,10 @@ PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view hos
     tv.tv_usec = static_cast<long>((timeout.count() % 1000) * 1000);
     const int ready = ::select(sock_fd_ + 1, &readfds, nullptr, nullptr, &tv);
     if (ready <= 0) {
-        return PingResult{false, 0.0}; // timeout oder Fehler
+        return PingResult{false, 0.0}; // timeout or error
     }
 
-    // Empfang puffern
+    // Buffer incoming packet
     std::uint8_t recv_buf[512]{};
     sockaddr_in recv_addr{};
     socklen_t recv_len = sizeof(recv_addr);
@@ -136,7 +136,7 @@ PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view hos
     const auto t1 = std::chrono::steady_clock::now();
     const double rtt_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
 
-    // Minimalprüfung: ICMP Echo Reply
+    // Minimal validation: ICMP Echo Reply
     if (static_cast<std::size_t>(recvd) < kIcmpHeaderSize + sizeof(iphdr)) {
         return PingResult{false, 0.0};
     }

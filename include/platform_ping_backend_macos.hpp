@@ -8,15 +8,15 @@
 
 namespace pingstats {
 
-// macOS-spezifische Implementation des PlatformPingBackend für ICMP-Echo.
-// Thread-Safety: nicht threadsicher; parallele Zugriffe müssen extern synchronisiert werden.
+// macOS-specific implementation of PlatformPingBackend for ICMP echo.
+// Thread-safety: not thread-safe; callers must synchronize concurrent access externally.
 class MacOsPingBackend final : public PlatformPingBackend {
 public:
     MacOsPingBackend();
     ~MacOsPingBackend() override;
 
-    void initialize() override;  // Bereitet Raw-Socket vor; erfordert root/CAP_NET_RAW-ähnliche Rechte.
-    void shutdown() override;    // Gibt Ressourcen frei.
+    void initialize() override;  // Prepares raw socket; requires root/CAP_NET_RAW-like privileges.
+    void shutdown() override;    // Releases resources.
 
     PingResult send_ping(std::string_view host, std::chrono::milliseconds timeout) override;
 

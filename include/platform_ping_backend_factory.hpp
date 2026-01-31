@@ -6,8 +6,8 @@
 
 namespace pingstats {
 
-// Erzeugt zur Laufzeit das passende PlatformPingBackend für das aktuelle Betriebssystem.
-// Auf nicht unterstützten Plattformen wird ein Stub-Backend zurückgegeben, das immer "unsuccessful" liefert.
+// Creates the appropriate PlatformPingBackend for the current operating system at runtime.
+// On unsupported platforms, returns a stub backend that always reports "unsuccessful".
 std::unique_ptr<PlatformPingBackend> make_platform_ping_backend();
 
 } // namespace pingstats

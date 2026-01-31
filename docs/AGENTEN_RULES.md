@@ -1,194 +1,196 @@
-# **AGENTEN_RULES.md – Verhaltensregeln für KI‑Agenten in diesem Projekt**  
-*(Modern, minimalistisch, robust, KI‑freundlich)*
+# **AGENTEN_RULES.md – Behavioral Rules for AI Agents in this Project**  
+*(Modern, minimalist, robust, AI-friendly)*
 
-## **0. Zweck dieser Datei**
-Diese Datei definiert **alle Regeln**, nach denen ein KI‑Agent in diesem Projekt arbeitet.  
-Sie stellt sicher, dass **jeder KI‑Agent**:
+The project language is English. All texts in other languages should be replaced by English.
 
-- Aufgaben immer gleich verarbeitet  
-- Ergebnisse vollständig dokumentiert  
-- TODO‑Listen korrekt pflegt  
-- Dateien an den richtigen Orten ablegt  
-- konsistent, reproduzierbar und nachvollziehbar arbeitet  
+## **0. Purpose of this Document**
+This document defines **all rules** by which an AI agent operates in this project.  
+It ensures that **every AI agent**:
 
-Diese Regeln gelten **für jeden Prompt**, **jede Antwort** und **jede Aktion** des KI‑Agenten.
+- processes tasks consistently  
+- documents results completely  
+- maintains TODO lists correctly  
+- stores files in the right locations  
+- works in a consistent, reproducible, and auditable manner  
 
----
-
-# **1. Grundprinzipien des KI‑Agenten**
-1. **Alles, was der Agent erhält oder erzeugt, wird archiviert.**  
-2. **Der Agent arbeitet transparent, reproduzierbar und nachvollziehbar.**  
-3. **Der Agent überschreibt niemals Dateien ohne explizite Anweisung.**  
-4. **Der Agent fragt nach, wenn Informationen fehlen.**  
-5. **Der Agent hält sich strikt an die Projektstruktur.**  
-6. **Der Agent arbeitet schrittweise und markiert erledigte Aufgaben selbstständig.**
+These rules apply **to every prompt**, **every response**, and **every action** of the AI agent.
 
 ---
 
-# **2. Projektstruktur (Verzeichnisregeln)**
+# **1. Core Principles of the AI Agent**
+1. **Everything the agent receives or produces is archived.**  
+2. **The agent works transparently, reproducibly, and traceably.**  
+3. **The agent never overwrites files without explicit instruction.**  
+4. **The agent asks questions when information is missing.**  
+5. **The agent strictly follows the project structure.**  
+6. **The agent works step by step and marks completed tasks autonomously.**
 
-Der KI‑Agent hält sich an folgende feste Struktur:
+---
 
-| Bereich | Zweck | Pfad |
+# **2. Project Structure (Directory Rules)**
+
+The AI agent follows this fixed structure:
+
+| Area | Purpose | Path |
 |--------|-------|------|
-| **Prompts** | Archiv aller Prompts, Rückfragen, Antworten | `docs/prompts/` |
-| **Reports** | Ergebnisberichte, Arbeitsprotokolle | `docs/reports/` |
-| **TODO‑Dateien** | Aufgabenlisten für Agenten | `docs/todo/` |
-| **Konzepte** | Architekturideen, Entwürfe, Überlegungen | `docs/concepts/` |
-| **Dokumentation** | Technische Doku für Entwickler | `docs/documentation/` |
-| **Benutzeranleitungen** | Anleitung für Menschen, die das Projekt nutzen | `docs/manuals/` |
-| **Projekt‑Skripte** | Skripte, die Teil des Projekts sind | `scripts/project/` |
-| **Benutzer‑Skripte** | Skripte zur Erleichterung der Bedienung | `scripts/user/` |
+| **Prompts** | Archive of all prompts, questions, answers | `docs/prompts/` |
+| **Reports** | Result reports, work logs | `docs/reports/` |
+| **TODO Files** | Task lists for agents | `docs/todo/` |
+| **Concepts** | Architecture ideas, drafts, considerations | `docs/concepts/` |
+| **Documentation** | Technical documentation for developers | `docs/documentation/` |
+| **User Manuals** | Guides for people using the project | `docs/manuals/` |
+| **Project Scripts** | Scripts that are part of the project | `scripts/project/` |
+| **User Scripts** | Scripts that simplify usage | `scripts/user/` |
 
-Der Agent legt Dateien **immer** in diesen Bereichen ab.  
-Wenn ein Bereich fehlt, erstellt der Agent ihn.
+The agent **always** stores files in these areas.  
+If an area is missing, the agent creates it.
 
 ---
 
-# **3. Prompt‑Archivierung**
+# **3. Prompt Archiving**
 
-Für **jeden Prompt**, inklusive Rückfragen und Antworten, erstellt der Agent eine Archivdatei:
+For **every prompt**, including follow-up questions and answers, the agent creates an archive file:
 
-- Speicherort: `docs/prompts/`
+- Location: `docs/prompts/`
 - Format: Markdown
-- Dateiname:  
-  `Prompt_YYYYMMDD_HHMMSS_KurzerName.md`
+- Filename:  
+  `Prompt_YYYYMMDD_HHMMSS_ShortName.md`
 
-Inhalt:
+Contents:
 
-1. Original‑Prompt  
-2. Rückfragen des Agenten  
-3. Antworten des Nutzers  
-4. Endergebnis  
-5. Referenzen auf erzeugte Dateien
+1. Original prompt  
+2. Agent questions  
+3. User answers  
+4. Final result  
+5. References to generated files
 
 ---
 
 # **4. Reports**
 
-Der Agent erstellt einen Report, wenn:
+The agent creates a report when:
 
-- eine Aufgabe abgeschlossen wurde  
-- eine Datei erzeugt wurde  
-- eine TODO‑Liste aktualisiert wurde  
-- ein Konzept erstellt wurde  
-- ein Problem auftrat  
+- a task has been completed  
+- a file was created  
+- a TODO list was updated  
+- a concept was created  
+- a problem occurred  
 
-Regeln:
+Rules:
 
-- Speicherort: `docs/reports/`
+- Location: `docs/reports/`
 - Format: Markdown
-- Dateiname:  
+- Filename:  
   `Report_YYYYMMDD_HHMMSS_Name.md`
-- Inhalt:
-  - Zweck  
-  - Schritte  
-  - Ergebnisse  
-  - erzeugte Dateien  
-  - aktualisierte TODO‑Punkte  
+- Contents:
+  - Purpose  
+  - Steps  
+  - Results  
+  - Created files  
+  - Updated TODO items  
 
 ---
 
-# **5. TODO‑Regeln**
+# **5. TODO Rules**
 
-## **5.1 Struktur einer TODO‑Datei**
-Eine TODO‑Datei besteht aus:
+## **5.1 Structure of a TODO File**
+A TODO file consists of:
 
-- **Hauptpunkten** (nummeriert: 1, 2, 3, …)
-- **Unterpunkten** (A, B, C, …)
-- **Unter‑Unterpunkten** (I, II, III, …)
+- **Main items** (numbered: 1, 2, 3, …)
+- **Sub-items** (A, B, C, …)
+- **Sub-sub-items** (I, II, III, …)
 
-Beispiel:
+Example:
 
 ```
-1. [ ] Hauptaufgabe
-   A. [ ] Unteraufgabe
-      I. [ ] Unterunteraufgabe
+1. [ ] Main task
+   A. [ ] Subtask
+      I. [ ] Sub-subtask
 ```
 
-## **5.2 Regeln für TODO‑Einträge**
-- Jeder Punkt hat ein Statusfeld:
-  - `[ ]` offen  
-  - `[x]` erledigt  
-- Der Agent **darf neue Punkte hinzufügen**, aber **niemals löschen**.  
-- Der Agent markiert Punkte **selbstständig als erledigt**, wenn:
-  - die Aufgabe vollständig erfüllt wurde  
-  - alle Unterpunkte erledigt sind  
-  - die Ergebnisse dokumentiert wurden  
+## **5.2 Rules for TODO Entries**
+- Every item has a status field:
+  - `[ ]` open  
+  - `[x]` done  
+- The agent **may add new items** but **must never delete** existing ones.  
+- The agent marks items **autonomously as done** when:
+  - the task is fully completed  
+  - all sub-items are done  
+  - the results have been documented  
 
-## **5.3 Selbstständige Abarbeitung**
-Der Agent arbeitet TODO‑Listen so ab:
+## **5.3 Autonomous Processing**
+The agent processes TODO lists as follows:
 
-1. **Punkt lesen**  
-2. **Verstehen, was verlangt wird**  
-3. **Fehlende Informationen erfragen**  
-4. **Aufgabe ausführen**  
-5. **Ergebnisse dokumentieren (Report)**  
-6. **Punkt abhaken**  
-7. **Nächsten Punkt bearbeiten**
+1. **Read the item**  
+2. **Understand what is required**  
+3. **Ask for missing information**  
+4. **Execute the task**  
+5. **Document the results (report)**  
+6. **Check off the item**  
+7. **Work on the next item**
 
 ---
 
-# **6. Regeln für Dateiformate**
+# **6. Rules for File Formats**
 
-Der Agent verwendet folgende Formate:
+The agent uses the following formats:
 
-| Zweck | Format |
+| Purpose | Format |
 |-------|--------|
 | Prompts | `.md` |
 | Reports | `.md` |
-| TODO‑Listen | `.md` |
-| Konzepte | `.md` |
-| Dokumentation | `.md` |
-| Benutzeranleitungen | `.md` |
-| Skripte | `.sh`, `.ps1`, `.py`, `.bat` |
-| Konfiguration | `.json`, `.yaml`, `.toml` |
+| TODO lists | `.md` |
+| Concepts | `.md` |
+| Documentation | `.md` |
+| User manuals | `.md` |
+| Scripts | `.sh`, `.ps1`, `.py`, `.bat` |
+| Configuration | `.json`, `.yaml`, `.toml` |
 
-Regeln:
+Rules:
 
-- Markdown ist Standard für alle textbasierten Inhalte.  
-- Der Agent erzeugt **keine Binärdateien**, außer wenn explizit angewiesen.  
-- Der Agent dokumentiert jede erzeugte Datei in einem Report.
-
----
-
-# **7. Arbeitsweise des KI‑Agenten**
-
-Der Agent arbeitet nach folgenden Prinzipien:
-
-### **7.1 Schrittweises Vorgehen**
-- Der Agent führt Aufgaben in klaren, nachvollziehbaren Schritten aus.
-- Jeder Schritt wird dokumentiert.
-
-### **7.2 Rückfragen**
-Der Agent stellt Rückfragen, wenn:
-
-- Informationen fehlen  
-- Anforderungen unklar sind  
-- mehrere Interpretationen möglich sind  
-
-### **7.3 Konsistenz**
-Der Agent:
-
-- hält sich an die Projektstruktur  
-- verwendet konsistente Sprache  
-- erzeugt reproduzierbare Ergebnisse  
-- vermeidet unnötige Änderungen  
-
-### **7.4 Sicherheit**
-Der Agent überschreibt **niemals**:
-
-- bestehende Dateien  
-- bestehende TODO‑Einträge  
-
-ohne ausdrückliche Anweisung.
+- Markdown is the default for all text-based content.  
+- The agent produces **no binary files**, unless explicitly instructed.  
+- The agent documents every generated file in a report.
 
 ---
 
-# **8. Abschlussregeln**
+# **7. Working Method of the AI Agent**
 
-- Diese Datei gilt für **alle KI‑Agenten**, unabhängig von Modell, Version oder Fähigkeiten.  
-- Der Agent liest diese Datei **vor jeder Aufgabe**.  
-- Der Agent hält sich strikt an diese Regeln.  
-- Änderungen an dieser Datei dürfen nur durch den Nutzer erfolgen, nicht durch den Agenten.
+The agent works according to the following principles:
+
+### **7.1 Step-by-Step Approach**
+- The agent executes tasks in clear, traceable steps.
+- Every step is documented.
+
+### **7.2 Questions**
+The agent asks questions when:
+
+- information is missing  
+- requirements are unclear  
+- multiple interpretations are possible  
+
+### **7.3 Consistency**
+The agent:
+
+- adheres to the project structure  
+- uses consistent language  
+- produces reproducible results  
+- avoids unnecessary changes  
+
+### **7.4 Safety**
+The agent **never** overwrites:
+
+- existing files  
+- existing TODO items  
+
+without explicit instruction.
+
+---
+
+# **8. Closing Rules**
+
+- This document applies to **all AI agents**, regardless of model, version, or capabilities.  
+- The agent reads this document **before every task**.  
+- The agent strictly follows these rules.  
+- Changes to this document may only be made by the user, not by the agent.
 

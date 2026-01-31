@@ -1,27 +1,27 @@
 # Report – Effort to switch histogram to non-linear buckets (finer at low RTT, coarser at high RTT)
 
-## Kontext
-- Histogramm-Buckets sind aktuell fest auf lineare Grenzen {10,20,50,100,200,500} ms gesetzt in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17) und werden pro Host beim Anlegen übernommen [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
-- Bucket-Zuordnung läuft über einfaches Schwellen-Vergleichen [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:148) und Rendering nutzt die Grenzen direkt [`console_view_impl.cpp`](src/console_view_impl.cpp:213).
-- CLI/Config enthält zwar `bucket_boundaries`, wird aber derzeit nicht in die Aggregator-Instanzen injiziert [`config.hpp`](include/config.hpp:15).
+## Context
+- Histogram buckets are currently fixed to linear boundaries {10,20,50,100,200,500} ms in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17) and are adopted per host during creation [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
+- Bucket assignment uses simple threshold comparisons [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:148) and rendering uses those boundaries directly [`console_view_impl.cpp`](src/console_view_impl.cpp:213).
+- The CLI/config contains `bucket_boundaries`, but they are currently not injected into aggregator instances [`config.hpp`](include/config.hpp:15).
 
-## Optionen und Aufwand
-1) **Statische logarithmische Defaults (Quick Win)**
-   - Ändere Default-Grenzen auf log-ähnliche Staffel (z. B. 0.5,1,2,5,10,20,50,100,200,500,1000 ms) an [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17).
-   - Bestehende Zuweisung/Anzeige bleibt unverändert; Labels passen sich automatisch an.
-   - Aufwand: ~1–2 h (Code + kurze Doku/Changelog + Smoke-Test).
+## Options and Effort
+1) **Static logarithmic defaults (quick win)**
+   - Change default boundaries to a log-like sequence (e.g., 0.5,1,2,5,10,20,50,100,200,500,1000 ms) in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17).
+   - Existing assignment/rendering remains unchanged; labels adapt automatically.
+   - Effort: ~1–2 h (code + short docs/changelog + smoke test).
 
-2) **Konfigurierbare Bucket-Schemata (Presets/Custom)**
-   - Übergib benutzerdefinierte Grenzen aus CLI/TargetConfig und verwende sie beim Host-Anlegen anstelle des Defaults [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
-   - Füge Presets ("fine", "log", "coarse") plus freies List-Flag hinzu; Doku/Help anpassen; Unit-Tests für Zuordnung/Labeling.
-   - Aufwand: ~2–4 h (CLI-Plumbing, Tests, Doku).
+2) **Configurable bucket schemes (presets/custom)**
+   - Pass user-defined boundaries from CLI/TargetConfig and use them when creating hosts instead of the default [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
+   - Add presets ("fine", "log", "coarse") plus a free-list flag; adjust docs/help; add unit tests for mapping/labeling.
+   - Effort: ~2–4 h (CLI plumbing, tests, docs).
 
-3) **Adaptives Histogramm (dynamisch)**
-   - Kanten aus Beobachtungen ableiten (z. B. log um Median/IQR oder Quantile), Re-Binning bei Kantenänderung, Konsistenz der Snapshots sichern.
-   - Erfordert zusätzliche State-Verwaltung und Thread-Safety-Review.
-   - Aufwand: ~1–2 Tage (Design, Implementierung, Stabilitätstests).
+3) **Adaptive histogram (dynamic)**
+   - Derive edges from observations (e.g., log around median/IQR or quantiles), re-bin when edges change, and ensure snapshot consistency.
+   - Requires additional state management and thread-safety review.
+   - Effort: ~1–2 days (design, implementation, stability tests).
 
-## Empfehlung
-- Für schnellen Mehrwert: Option 1 (log-spaced Defaults) umsetzen und als neuen Default dokumentieren.
-- Für Nutzersteuerung: Option 2 implementieren (Presets + freie Liste), Standard weiterhin log-spaced.
-- Option 3 nur bei expliziter Anforderung nach adaptiven Buckets.
+## Recommendation
+- For quick value: implement option 1 (log-spaced defaults) and document as the new default.
+- For user control: implement option 2 (presets + free list), keeping log-spaced as the default.
+- Option 3 only if explicitly requested for adaptive buckets.

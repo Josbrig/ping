@@ -1,78 +1,78 @@
-# Architekturübersicht für pingstats
+# Architecture Overview for pingstats
 
-## Kurzkontext
+## Short Context
 
-pingstats ist ein in C++20 entwickeltes, mit CMake gebautes Konsolenwerkzeug zur Analyse von Netzwerk-Latenzen. Die Architektur ist plattformübergreifend ausgelegt und unterstützt Linux, macOS, WSL, Cygwin und MinGW. Systemnahe Details wie ICMP-Handhabung und Socket-APIs werden über klar abgegrenzte Backend-Schnittstellen gekapselt.
+pingstats is a C++20 console tool, built with CMake, for analyzing network latency. The architecture is cross-platform and supports Linux, macOS, WSL, Cygwin, and MinGW. Low-level details such as ICMP handling and socket APIs are encapsulated behind clearly defined backend interfaces.
 
-## Hauptmodule und Verantwortlichkeiten
+## Main Modules and Responsibilities
 
 ### PlatformPingBackend
 
-- Implementiert die OS-spezifische Erzeugung und Auswertung von ICMP-Echo-Requests und -Replies.
-- Kapselt Unterschiede der zugrunde liegenden Netzwerk-APIs (raw sockets, Berechtigungen, Timeouts) pro Plattform.
-- Stellt eine einheitliche Schnittstelle bereit, über die höhere Schichten Ping-Anfragen für ein bestimmtes Ziel und einen Timestamp auslösen und die gemessene Round-Trip-Time (RTT) zurückerhalten.
-- Ermöglicht den Austausch oder die Ergänzung weiterer Backends, ohne dass die übrige Anwendung angepasst werden muss.
+- Implements OS-specific creation and evaluation of ICMP echo requests and replies.
+- Encapsulates differences in underlying network APIs per platform (raw sockets, permissions, timeouts).
+- Provides a unified interface so higher layers can issue ping requests for a target and timestamp and receive the measured round-trip time (RTT).
+- Enables swapping or adding more backends without changing the rest of the application.
 
-### PingSession und PingWorker
+### PingSession and PingWorker
 
-- Repräsentieren die laufende Messung für ein Ziel (Host oder IP) mit festgelegtem Intervall.
-- PingSession verwaltet den Lebenszyklus für ein Ziel (Start, Stop, Fehlerbehandlung) und hält Referenzen auf PlatformPingBackend und StatisticsAggregator.
-- PingWorker führt die eigentlichen Ping-Operationen in einem wiederholten Takt aus (z. B. eigener Thread pro Ziel oder aus einem Threadpool heraus).
-- Jede Messung erzeugt ein Rohdatenergebnis mit Zeitstempel, RTT, Erfolgsstatus und Sequenznummer, das an den StatisticsAggregator übergeben wird.
+- Represent the ongoing measurement for a target (host or IP) at a fixed interval.
+- PingSession manages the lifecycle for a target (start, stop, error handling) and holds references to PlatformPingBackend and StatisticsAggregator.
+- PingWorker performs the actual ping operations on a recurring schedule (e.g., its own thread per target or from a thread pool).
+- Each measurement produces a raw data result with timestamp, RTT, success status, and sequence number, which is passed to the StatisticsAggregator.
 
 ### StatisticsAggregator
 
-- Nimmt Rohmessungen aus allen aktiven PingSessions entgegen.
-- Berechnet fortlaufend Kenngrößen wie Minimum, Maximum, arithmetisches Mittel und Median der RTT.
-- Führt ein Histogramm über Latenzbereiche und verwaltet einen Zeitreihenpuffer für den Verlauf der Messwerte.
-- Ermittelt Paketverlust über gezählte gesendete vs. erfolgreich beantwortete Pakete pro Ziel.
-- Stellt aggregierte Sichten pro Ziel sowie ggf. globale Sichten für die ConsoleView und Exportfunktionen bereit.
+- Receives raw measurements from all active PingSessions.
+- Computes rolling metrics such as minimum, maximum, arithmetic mean, and median RTT.
+- Maintains a histogram of latency ranges and a time-series buffer for the history of measurements.
+- Derives packet loss by comparing sent vs. successfully answered packets per target.
+- Provides aggregated views per target and optionally global views for the ConsoleView and export functions.
 
-### TargetConfig und Config
+### TargetConfig and Config
 
-- Beschreiben statisch oder aus Konfigurationsdateien geladene Ziele inklusive Hostnamen/IPs, Ping-Intervalle und Laufzeiteinstellungen.
-- Definieren Formatoptionen für Ausgabe und Export (z. B. aktivierte Metriken, Histogrammauflösung, Zeitreihenlänge).
-- Dienen main als zentrale Quelle für alle Konfigurationen, sodass Module wie PingSession, StatisticsAggregator und ConsoleView konsistent initialisiert werden.
+- Describe targets defined statically or loaded from configuration files, including hostnames/IPs, ping intervals, and runtime settings.
+- Define formatting options for output and export (e.g., enabled metrics, histogram resolution, time-series length).
+- Serve main as the central source for all configurations so modules like PingSession, StatisticsAggregator, and ConsoleView are initialized consistently.
 
-### ConsoleView und Renderer
+### ConsoleView and Renderer
 
-- Visualisieren die aktuellen Statistiken auf der Konsole.
-- Bauen tabellarische Übersichten pro Ziel mit Kennzahlen wie Min/Max/Mean/Median, Paketverlust sowie aktuellem RTT-Wert auf.
-- Stellen Zeitverlaufs-Ansichten (z. B. kompakte Sparklines oder vereinfachte Zeitachsen) dar, basierend auf dem Zeitreihenpuffer des StatisticsAggregator.
-- Rendern Histogramme der Latenzverteilung in textueller Form.
-- Aktualisieren die Konsole periodisch oder eventgesteuert, indem sie die jeweils aktuellen Daten aus dem StatisticsAggregator abfragen.
+- Visualize current statistics in the console.
+- Build tabular overviews per target with metrics such as Min/Max/Mean/Median, packet loss, and current RTT.
+- Present time-series views (e.g., compact sparklines or simplified timelines) based on the StatisticsAggregator’s time-series buffer.
+- Render histograms of latency distribution in textual form.
+- Refresh the console periodically or event-driven by fetching the latest data from the StatisticsAggregator.
 
 ### main
 
-- Startpunkt der Anwendung und zentrale „Verkabelung“ der Module.
-- Führt CLI-Parsing durch (Ziele, Intervalle, Ausgabeoptionen, Exportformate) und erzeugt darauf basierend TargetConfig und globale Config.
-- Initialisiert PlatformPingBackend und StatisticsAggregator.
-- Erzeugt für jedes konfigurierte Ziel eine PingSession und den zugehörigen PingWorker und startet die parallele Ausführung.
-- Initialisiert ConsoleView und setzt die periodische Aktualisierung auf, typischerweise über einen eigenen Rendering-Loop oder Timer.
-- Koordiniert sauberes Herunterfahren, beendet Sessions und sorgt für einen konsistenten Abschluss aller Hintergrundaktivitäten.
+- Entry point of the application and central “wiring” of the modules.
+- Performs CLI parsing (targets, intervals, output options, export formats) and derives TargetConfig and global Config.
+- Initializes PlatformPingBackend and StatisticsAggregator.
+- Creates a PingSession and corresponding PingWorker for each configured target and starts parallel execution.
+- Initializes ConsoleView and sets up periodic refresh, typically via its own rendering loop or timer.
+- Coordinates clean shutdown, stops sessions, and ensures a consistent termination of all background activities.
 
-## Datenflüsse
+## Data Flows
 
-- PingWorker in jeder PingSession erzeugen Messereignisse für ihr Ziel, indem sie über PlatformPingBackend ICMP-Anfragen senden und Antworten auswerten.
-- Jede erfolgreiche oder fehlgeschlagene Messung wird als Event an den StatisticsAggregator übergeben.
-- Der StatisticsAggregator aktualisiert seine internen Strukturen (Statistiken, Histogramme, Zeitreihenpuffer, Paketverlustzähler).
-- ConsoleView ruft in festen Abständen die aktuellen Aggregationsdaten vom StatisticsAggregator ab und rendert die Ausgabe in der Konsole.
-- Exportfunktionen (z. B. CSV/JSON) greifen ebenfalls lesend auf die vom StatisticsAggregator bereitgestellten Daten zu, ohne in den Messfluss einzugreifen.
+- PingWorkers in each PingSession generate measurement events for their target by sending ICMP requests via PlatformPingBackend and evaluating responses.
+- Every successful or failed measurement is sent as an event to the StatisticsAggregator.
+- The StatisticsAggregator updates its internal structures (statistics, histograms, time-series buffers, packet-loss counters).
+- ConsoleView periodically pulls the current aggregation data from the StatisticsAggregator and renders the console output.
+- Export functions (e.g., CSV/JSON) also read from the data provided by the StatisticsAggregator without interfering with the measurement flow.
 
-Die Datenflüsse sind überwiegend eventbasiert (Messereignisse von Sessions zum Aggregator) und werden von der View und Exportpfaden über periodisches Pulling der aggregierten Daten ergänzt.
+The data flows are predominantly event-based (measurement events from sessions to the aggregator) and are complemented by periodic pulling of aggregated data by the view and export paths.
 
-## Parallelität und Synchronisation
+## Concurrency and Synchronization
 
-- Für jedes Ziel kann eine eigene PingSession mit separatem PingWorker in einem Thread laufen; alternativ kann ein Threadpool genutzt werden, der mehrere Ziele bedient.
-- Alle PingWorker schreiben konkurrierend in den gemeinsamen StatisticsAggregator.
-- Der StatisticsAggregator verwendet geeignete Synchronisationsmechanismen (z. B. Mutexe oder Lock-free Strukturen, wo passend), um konsistente Updates der Statistikdatenstrukturen sicherzustellen.
-- Lesezugriffe der ConsoleView und Exportfunktionen auf den StatisticsAggregator laufen typischerweise parallel zu schreibenden Messereignissen und werden durch dieselben Synchronisationsprimitive abgesichert.
-- Die Konfiguration (TargetConfig/Config) wird nach Initialisierung als weitgehend unveränderlich behandelt und kann daher in der Regel ohne zusätzliche Synchronisation gelesen werden.
+- Each target can run its own PingSession with a dedicated PingWorker thread; alternatively, a thread pool can serve multiple targets.
+- All PingWorkers write concurrently into the shared StatisticsAggregator.
+- The StatisticsAggregator uses appropriate synchronization mechanisms (e.g., mutexes or lock-free structures where appropriate) to ensure consistent updates to statistical data structures.
+- Read access by ConsoleView and export functions typically occurs in parallel with measurement writes and is safeguarded by the same synchronization primitives.
+- Configuration (TargetConfig/Config) is treated as largely immutable after initialization and can generally be read without additional synchronization.
 
-## Erweiterbarkeit
+## Extensibility
 
-- PlatformPingBackend ist als Austauschpunkt für unterschiedliche ICMP-Implementierungen ausgelegt. Weitere Backends können z. B. spezielle System-APIs oder benutzerlandbasierte Pings (UDP/TCP) implementieren, ohne dass PingSession oder StatisticsAggregator angepasst werden müssen.
-- ConsoleView und Renderer sind so strukturiert, dass zusätzliche Ausgabeziele ergänzt werden können, etwa farbige Konsole, alternative Layouts oder andere rendererseitige Darstellungsformen.
-- Die Export-Schicht unterstützt CSV- und JSON-Ausgaben auf Basis der vom StatisticsAggregator bereitgestellten Daten. Weitere Exportpfade wie Prometheus-Endpoints oder eine WebUI können ergänzt werden, indem sie auf dieselben Aggregationsdaten zugreifen.
-- Neue Metriken oder zusätzliche Auswertungen lassen sich im StatisticsAggregator implementieren, ohne den Messpfad grundlegend zu ändern, solange die Schnittstellen für Rohmessungen stabil bleiben.
+- PlatformPingBackend is designed as a swap point for different ICMP implementations. Additional backends can implement specialized system APIs or user-space pings (UDP/TCP) without requiring changes to PingSession or StatisticsAggregator.
+- ConsoleView and Renderer are structured to allow additional output targets, such as colored console output, alternative layouts, or other rendering formats.
+- The export layer supports CSV and JSON outputs based on the data provided by the StatisticsAggregator. Further export paths, such as Prometheus endpoints or a web UI, can be added by consuming the same aggregation data.
+- New metrics or additional analyses can be implemented in the StatisticsAggregator without fundamentally altering the measurement path, as long as the interfaces for raw measurements remain stable.
 

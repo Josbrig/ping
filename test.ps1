@@ -1,7 +1,11 @@
 <#!
-PowerShell script to configure (if needed), build, run ctest, and optionally run pingstats against one or more hosts.
+PowerShell helper to configure (if needed), build, run ctest, and optionally
+run pingstats against one or more hosts. All steps are logged to help diagnose
+CI/local issues without changing behavior.
+
 Usage:
   ./test.ps1 [-Config Debug|Release] [-Help] [--] host1 [host2 ...]
+
 Examples:
   ./test.ps1                    # build+ctest only (Debug)
   ./test.ps1 -Config Release    # build+ctest in Release
@@ -32,6 +36,7 @@ If one or more hosts are provided, pingstats is executed afterwards with those h
 
 function Ensure-BuildDir {
     param([string]$Dir)
+    # Create build directory if it does not exist (idempotent).
     if (-not (Test-Path -LiteralPath $Dir)) {
         New-Item -ItemType Directory -Path $Dir | Out-Null
     }
@@ -39,24 +44,28 @@ function Ensure-BuildDir {
 
 function Run-CMakeConfigure {
     param([string]$Dir)
+    # Configure project in the chosen build directory (generator inferred).
     Write-Host "[cmake] Configuring ($Config)" -ForegroundColor Cyan
     cmake -S . -B $Dir | Write-Output
 }
 
 function Run-CMakeBuild {
     param([string]$Dir)
+    # Build requested configuration (Debug/Release) in-place.
     Write-Host "[cmake] Building ($Config)" -ForegroundColor Cyan
     cmake --build $Dir --config $Config | Write-Output
 }
 
 function Run-CTests {
     param([string]$Dir)
+    # Execute ctest with verbose failures to spot issues quickly.
     Write-Host "[ctest] Running tests ($Config)" -ForegroundColor Cyan
     ctest --test-dir $Dir --build-config $Config --output-on-failure | Write-Output
 }
 
 function Run-PingStats {
     param([string]$Dir, [string[]]$Args)
+    # Locate built pingstats (handles .exe and non-.exe) and run with provided hosts.
     if (-not $Args -or $Args.Count -eq 0) { return }
 
     $exeCandidates = @(

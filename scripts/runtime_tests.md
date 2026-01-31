@@ -1,10 +1,12 @@
-# Automatisierte Laufzeittests (reale ICMP-Pings)
+# Runtime tests (real ICMP)
 
-Ziele: 8.8.8.8, 1.1.1.1, example.org
+Short manual/CI smoke instructions for a ~30s run with CSV export.
+
+Ziele/Targets: 8.8.8.8, 1.1.1.1, example.org
 Intervall: 1s, Laufzeit: ca. 30s
 Ausgabe: CSV-Export
 
-## Windows (MSVC Mehrkonfiguration)
+## Windows (MSVC multi-config)
 ```
 cmake -S . -B build
 cmake --build build --config Release
@@ -12,7 +14,7 @@ build\Release\pingstats.exe -i 1 --output-format=csv --output-file=runtime_windo
 # Laufzeit: manuell ca. 30s laufen lassen, dann Enter zum Beenden
 ```
 
-## Linux / WSL / macOS / Cygwin / MinGW (Einkonfiguration)
+## Linux / WSL / macOS / Cygwin / MinGW (single-config)
 ```
 cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
 cmake --build build-release

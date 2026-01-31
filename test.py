@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Configure, build, and run tests with CMake/ctest, then optionally run pingstats.
 
+Comments in this script document the flow without changing behavior.
+
 Usage:
   python test.py [-c Debug|Release] [-b build_dir] [-- host1 [host2 ...]]
 
@@ -20,6 +22,7 @@ from pathlib import Path
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> None:
+    """Execute a command, echo it first, and exit with the same code on failure."""
     print(f"[cmd] {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=cwd, check=False)
     if result.returncode != 0:
@@ -27,6 +30,7 @@ def run(cmd: list[str], cwd: Path | None = None) -> None:
 
 
 def main(argv: list[str]) -> int:
+    """Parse args, configure/build/test with CMake/ctest, then optionally run pingstats."""
     parser = argparse.ArgumentParser(description="Configure, build, and run ctest; optionally run pingstats.")
     parser.add_argument("-c", "--config", choices=["Debug", "Release"], default="Debug", help="CMake configuration")
     parser.add_argument("-b", "--build-dir", default="build", help="Build directory")
@@ -36,16 +40,16 @@ def main(argv: list[str]) -> int:
     build_dir = Path(args.build_dir)
     build_dir.mkdir(parents=True, exist_ok=True)
 
-    # Configure
+    # Configure (generator inferred) into the chosen build directory.
     run(["cmake", "-S", ".", "-B", str(build_dir)])
 
-    # Build
+    # Build the requested configuration (multi-config generators honor --config).
     run(["cmake", "--build", str(build_dir), "--config", args.config])
 
-    # Test
+    # Run tests with output-on-failure for easier triage.
     run(["ctest", "--test-dir", str(build_dir), "--build-config", args.config, "--output-on-failure"])
 
-    # Optional: run pingstats on provided hosts
+    # Optional: run pingstats on provided hosts (resolve common executable names).
     if args.hosts:
         candidates = [
             build_dir / args.config / "pingstats.exe",

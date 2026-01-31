@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Configure, build, and run tests (ctest), then optionally run pingstats with one or more hosts.
+# Comments describe each step; behavior is unchanged.
 # Usage:
 #   ./test.sh [-c Debug|Release] [--] host1 [host2 ...]
 # Examples:
@@ -50,16 +51,20 @@ done
 BUILD_DIR="build"
 mkdir -p "$BUILD_DIR"
 
+# Configure project into chosen build directory (generator inferred).
 echo "[cmake] Configuring ($CONFIG)"
 cmake -S . -B "$BUILD_DIR"
 
+# Build requested configuration (Debug/Release).
 echo "[cmake] Building ($CONFIG)"
 cmake --build "$BUILD_DIR" --config "$CONFIG"
 
+# Run tests with verbose failures for quick triage.
 echo "[ctest] Running tests ($CONFIG)"
 ctest --test-dir "$BUILD_DIR" --build-config "$CONFIG" --output-on-failure
 
 if [[ ${#HOSTS[@]} -gt 0 ]]; then
+  # Find built pingstats (handles .exe and non-.exe) and run with provided hosts.
   CANDIDATES=(
     "$BUILD_DIR/$CONFIG/pingstats.exe"
     "$BUILD_DIR/pingstats.exe"

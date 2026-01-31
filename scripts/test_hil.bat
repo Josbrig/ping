@@ -18,7 +18,7 @@ cmake --build build --config Release
 if errorlevel 1 goto :fail
 
 set OUTPUT_FILE=runtime_windows.csv
-set HOSTS=dan-o-mat megagamer
+set HOSTS=dan-o-mat megagamer google.de google.com simbrig.eu simbrig.de
 echo [info] Hinweis: ICMP kann Admin-Rechte/Firewall-Ausnahme erfordern; bei 100%% Loss prüfen Rechte/Netz.
 echo [run] build\Release\pingstats.exe -i 1 --output-format csv --output-file %OUTPUT_FILE% %HOSTS%
 start "pingstats_run" /B cmd /c "build\Release\pingstats.exe -i 1 --output-format csv --output-file %OUTPUT_FILE% %HOSTS%"

@@ -1,235 +1,148 @@
-```markdown
 # Project Overview
 
-This project provides a cross-platform ping tool that collects long-term statistics on the reachability and response times of one or more network targets. The goal is reliable, continuous monitoring with meaningful metrics and visualizations of latency over extended periods of time.
-
-The program is implemented in C++20 and built with CMake. It is designed to compile and run on Linux, macOS, Windows WSL, Windows Cygwin, and Windows MinGW. Platform-specific requirements for ICMP packets on each operating system are taken into account.
+pingstats is a cross-platform C++20/CMake tool that collects long-term ping statistics (latency and loss) for one or more targets. It is designed for reliable, continuous monitoring with meaningful metrics and optional exports/visualizations. Platform backends cover Linux, macOS, Windows (MSVC), WSL, Cygwin, and MinGW.
 
 # Key Features
 
-- Continuous sending of ICMP echo requests (pings) to one or more targets at configurable intervals.
-- Collection and analysis of the response time of each individual ping reply.
-- Per-target statistics for each IP address or hostname (separate evaluation per destination).
-- Display of the response times over time (e.g., as a simple text graph / latency curve in the console).
-- Creation of a histogram of ping response times to visualize the distribution of latencies.
-- Calculation of minimum, maximum, mean, and median per target based on all observed responses so far.
-- Ongoing measurement and statistics updates in near real time: the console is refreshed at regular intervals as long as the program is running.
-- Simultaneous monitoring of multiple targets: each target is measured in its own session and clearly separated in the output.
+- Periodic ICMP echo to multiple targets with configurable interval.
+- Per-target metrics: min, max, mean, median, packet loss, histogram buckets, time-series buffer.
+- Console output with tables and simple time-series/histogram views.
+- CSV and JSON exporters for downstream analysis.
+- Cross-platform backend abstraction (factory-selected per host OS).
+- Unit and integration tests via CTest.
 
 # System Requirements
 
 ## General
-
-- C++20-capable compiler (e.g., GCC, Clang, MSVC, or MinGW with C++20 support).
-- CMake in a recent version, recommended 3.20 or later.
-- Network access to the monitored targets.
-- Permissions to send ICMP echo requests (ping). Depending on platform and configuration, elevated privileges may be required (e.g., root on Linux, administrator privileges on Windows, or appropriate capabilities such as `CAP_NET_RAW`).
+- C++20 compiler toolchain and CMake ≥ 3.20.
+- ICMP/RAW socket permissions as required by the host OS (root/`CAP_NET_RAW` on Linux/WSL; Administrator on Windows variants).
+- Optional: Doxygen to build the `doxygen` target.
 
 ## Linux
-
-- Linux distribution with an installed C++20 compiler (e.g., `g++` or `clang++`).
-- CMake ≥ 3.20.
-- Sufficient ICMP permissions (e.g., running with `sudo` or setting `CAP_NET_RAW` on the binary).
+- Grant ICMP privileges (root or `CAP_NET_RAW`) for the process; otherwise packets will be blocked.
+- Standard single-config generators (`Ninja`, `Unix Makefiles`) are supported.
 
 ## macOS
+- ICMP echo requires elevated privileges (`sudo`) or appropriate entitlements; otherwise probes fail.
+- Uses single-config generators; no additional dependencies beyond the toolchain.
 
-- Recent Xcode toolchain or Command Line Tools with C++20 support.
-- CMake ≥ 3.20 (installed, for example, via Homebrew or MacPorts).
-- Execution in a terminal environment with sufficient privileges for ICMP packets.
+## Windows (MSVC)
+- Multi-config generators (Visual Studio/MSBuild); Administrator privileges may be required for ICMP.
+- Ensure outbound ICMP is allowed by Windows Defender Firewall or other policies.
 
-## Windows WSL
+## Windows (WSL)
+- Build inside WSL with the Linux toolchain; ICMP requires `CAP_NET_RAW` or `sudo` within the distro.
+- Windows firewall must allow outbound ICMP from WSL.
 
-- Windows with Windows Subsystem for Linux (WSL or WSL2) installed.
-- Linux environment in WSL with a C++20 compiler and CMake ≥ 3.20.
-- ICMP permissions inside the WSL distribution (possibly `sudo`).
+## Windows (Cygwin)
+- Single-config generators; run shell as Administrator to allow ICMP.
+- Same CMake/C++20 requirements as Linux.
 
-## Windows Cygwin
+## Windows (MinGW)
+- Single-config generators; requires a MinGW C++20 toolchain and CMake ≥ 3.20.
+- ICMP may require Administrator privileges depending on the environment and firewall policy.
 
-- Cygwin installation with a C++20-capable compiler (e.g., `g++` from the Cygwin packages).
-- CMake ≥ 3.20 as a Cygwin package.
-- Execution in a Cygwin terminal with the permissions required for ICMP.
+# Build & Test
 
-## Windows MinGW
+## Multi-config (Windows/MSVC)
+```powershell
+cmake -S . -B build
+cmake --build build --config Debug
+ctest --test-dir build --build-config Debug --output-on-failure
 
-- MinGW or MSYS2 environment with a C++20-capable compiler (e.g., `g++` from MinGW or `clang++`).
-- CMake ≥ 3.20 (e.g., as an MSYS2 package).
-- Execution in the corresponding shell (MSYS2/MinGW) with network access and, if necessary, administrator privileges if ICMP requires them.
+cmake --build build --config Release
+ctest --test-dir build --build-config Release --output-on-failure
 
-# Installation
+cmake --build build --config RelWithDebInfo
+ctest --test-dir build --build-config RelWithDebInfo --output-on-failure
 
-The following steps describe a typical CMake-based build. The exact process may vary depending on the environment (generator, paths, compiler), but the basic principle remains the same.
-
-## Unix-like Systems (Linux, macOS, WSL)
-
-In the project directory:
-
-```bash
-mkdir -p build
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+# Docs (optional, if doxygen found)
+cmake --build build --config Release --target doxygen
 ```
 
-For a debug build, adjust the build type accordingly:
-
+## Single-config (Linux/macOS/WSL/Cygwin/MinGW)
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build-debug
+ctest --test-dir build-debug --output-on-failure
+
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build build-release
+ctest --test-dir build-release --output-on-failure
+
+cmake -S . -B build-relwithdebinfo -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build-relwithdebinfo
+ctest --test-dir build-relwithdebinfo --output-on-failure
+
+# Docs (optional, if doxygen found)
+cmake --build build-release --target doxygen
 ```
 
-Depending on the chosen generator (e.g., Ninja, Makefiles), the appropriate build tools are invoked automatically.
+Convenience user scripts (see `scripts/user/`):
+- Windows PowerShell: [`scripts/user/build_all_windows.ps1`](scripts/user/build_all_windows.ps1:1)
+- Windows Batch: [`scripts/user/build_all_msvc.bat`](scripts/user/build_all_msvc.bat:1)
+- Unix (Linux/WSL/macOS): [`scripts/user/build_all_unix.sh`](scripts/user/build_all_unix.sh:1)
+- Cygwin/MinGW: [`scripts/user/build_all_cygwin_mingw.sh`](scripts/user/build_all_cygwin_mingw.sh:1)
 
-## Windows (Cygwin / MinGW)
-
-In the project directory, from a Cygwin or MSYS2/MinGW shell:
-
-```bash
-mkdir -p build
-cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-```
-
-For debug builds:
-
-```bash
-cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-```
-
-If a different generator (e.g., Ninja) is preferred, it can be specified via `-G`.
-
-# Usage
-
-In the following, we assume that the resulting binary is called [`pingstats`](build/pingstats) and is located in the `build` directory after the build.
-
-The general invocation pattern is:
+# Usage (binary name: `pingstats`)
 
 ```bash
 ./build/pingstats [options] <target1> [target2 ...]
 ```
 
-Typical targets are IP addresses or hostnames, such as `8.8.8.8` or `example.org`.
+Examples:
+- Single target (default interval): `./build/pingstats 8.8.8.8`
+- Multiple targets: `./build/pingstats 8.8.8.8 1.1.1.1 example.org`
+- Custom interval and CSV export: `./build/pingstats -i 1 --output-format=csv --output-file=pingstats.csv 8.8.8.8 1.1.1.1`
+- JSON export: `./build/pingstats -i 1 --output-format=json --output-file=pingstats.json 8.8.8.8`
 
-## Simple Example: Ping a Single Target
+Console output updates continuously with per-target stats, time series, and histograms; measurement runs until interrupted (Ctrl+C).
 
-Continuous pinging of a single target with the default interval (e.g., 1 second):
+# Sample Output (representative)
 
-```bash
-./build/pingstats 8.8.8.8
+Per-target stats table (live refresh):
+
+```
+Target        Sent  Recv  Loss   Min   Mean  Median  Max   Jitter
+8.8.8.8       120   120   0.0%  18.3  19.7   19.4  24.1   1.2
+1.1.1.1       120   118   1.7%  17.9  20.5   20.0  26.8   1.5
+example.org    60    55   8.3%  25.4  33.1   31.8  48.7   3.6
 ```
 
-The measurement continues until the user explicitly stops it (e.g., with `Ctrl+C`). Statistics and display are updated continuously.
+Time-series text graph (recent samples):
 
-## Monitor Multiple Targets in Parallel
-
-Simultaneous monitoring of multiple IP addresses or hosts:
-
-```bash
-./build/pingstats 8.8.8.8 1.1.1.1 example.org
+```
+1.1.1.1  ms:  |****    ** *   **  *  ** *
+8.8.8.8  ms:  | ***  **  * **  ** *  *  **
+example  ms:  |   **  * *   *  **   *   *
+           t:  -10s                 now
 ```
 
-An internal session is created for each target, and the output shows separate statistics per address/host.
+Histogram buckets (latency distribution):
 
-## Specify the Interval in Seconds
-
-With an option to control the interval (for example, `-i` in seconds):
-
-```bash
-./build/pingstats -i 2 8.8.8.8 1.1.1.1
+```
+8.8.8.8 latency histogram (ms)
+0-10   : ### (12)
+10-20  : ################ (63)
+20-30  : ####### (25)
+30-40  : # (3)
+40-50  : # (1)
 ```
 
-In this example, all specified targets are pinged every 2 seconds. The interval directly influences the temporal resolution of the statistics.
+# Architecture (high level)
 
-## Write Output to a File (e.g., CSV or JSON)
+- [`PingSession`](src/ping_session.hpp:1): manages periodic pings per target and forwards results.
+- [`StatisticsAggregator`](src/statistics_aggregator.hpp:1): computes metrics, histograms, and time-series buffers.
+- [`ConsoleView`](src/console_view.hpp:1): renders tables/graphs for the console.
+- [`PlatformPingBackend`](src/platform_ping_backend.hpp:1): OS-specific ICMP implementation (factory-selected).
+- Exporters: [`csv_exporter`](src/csv_exporter.cpp:1), [`json_exporter`](src/json_exporter.cpp:1).
+- Target configuration: [`TargetConfig`](include/config.hpp:15) captures per-target settings (interval, output format/file, histogram buckets).
 
-For later analysis, statistics can be written periodically or at program termination to a file, for example in CSV or JSON format. One possible syntax (example):
+# Notes
 
-```bash
-./build/pingstats -i 1 --output-format=csv --output-file=pingstats.csv 8.8.8.8 1.1.1.1
-```
-
-or for JSON:
-
-```bash
-./build/pingstats -i 1 --output-format=json --output-file=pingstats.json 8.8.8.8 1.1.1.1
-```
-
-Depending on the implementation, files may be updated continuously or written once at the end of the measurement.
-
-## Example Console Output
-
-During runtime, the program displays continuously updated statistics, typically in tabular form. A simplified example might look as follows:
-
-```text
-Timestamp: 2026-01-30 12:34:56
-
-Target         Packets   Min [ms]   Max [ms]   Mean [ms]   Median [ms]   Loss
--------------  -------  ---------  ---------  ----------  ------------  -----
-8.8.8.8           120       12.3       25.8        14.7          13.9    0.0 %
-1.1.1.1           120       10.8       21.2        13.5          12.7    0.0 %
-example.org       120       18.5       60.2        22.1          20.4    0.8 %
-```
-
-In addition, a simple time series of the most recent measurements per target can be shown at regular intervals, for example as a text graph:
-
-```text
-Time series of the last 60 seconds (latency in ms, lower is better)
-
-8.8.8.8:     ▁▁▂▂▃▃▄▅▆▆▆▇█▇▆▅▄▃▂▂▁▁
-1.1.1.1:     ▁▁▁▂▂▂▃▄▅▅▆▆▇▇▆▅▄▃▂▂▁▁
-example.org: ▂▃▃▄▅▆▇██▇▆▅▄▃▃▂▂▁▁▁▁▁
-```
-
-The histogram of response times can be printed, for example, as a bucket list:
-
-```text
-Histogram 8.8.8.8 (response time in ms)
-
-  0–10   ms:  5 ▓▓
- 10–20   ms: 80 ██████████████████
- 20–30   ms: 25 █████
- 30–40   ms: 10 ██
-  > 40   ms:  0
-```
-
-By default, the measurement runs indefinitely and is terminated by the user. With each update cycle, new ping results are incorporated into the statistics, and the reported metrics (min/max/mean/median, time series, histogram) are adjusted dynamically.
-
-# Project Architecture
-
-The internal structure is designed so that measurement logic, statistics calculation, configuration, output, and operating system abstraction are clearly separated. This keeps the code maintainable, extensible, and well testable.
-
-Core building blocks include the following components:
-
-- [`PingSession`](src/ping_session.hpp:1) or [`PingWorker`](src/ping_worker.hpp:1): Responsible for executing ICMP pings to a single target. Controls the send interval, collects raw measurement data (response times, packet loss), and reports it to the statistics component.
-- [`StatisticsAggregator`](src/statistics_aggregator.hpp:1): Receives raw data from individual sessions, computes minimum, maximum, mean, and median, maintains counters for packet loss, and produces data structures for histograms and time series (ring buffers for the last N measurements).
-- [`TargetConfig`](src/config.hpp:1): Represents a single target, including IP/hostname, ping interval, and optional target-specific settings. A higher-level configuration instance manages the complete set of targets.
-- [`ConsoleView`](src/console_view.hpp:1): Produces console output at regular intervals. Reads the current state from [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) and renders tables, time series, and histograms, ideally without flooding the terminal with excessive scrolling (for example, by updating the existing screen area).
-- [`PlatformPingBackend`](src/platform_ping_backend.hpp:1): Abstraction layer for the operating-system-specific ICMP implementation. Encapsulates differences in the available system calls, sockets, and privileges on Linux, macOS, WSL, Cygwin, and MinGW.
-
-Program startup (for example, in a function [`main`](src/main.cpp:1)) reads the configuration and command-line arguments, creates a [`TargetConfig`](src/config.hpp:1) instance for each target, and launches the corresponding [`PingSession`](src/ping_session.hpp:1) instances, typically in separate threads or asynchronous tasks. Each session uses [`PlatformPingBackend`](src/platform_ping_backend.hpp:1) to send ICMP packets and measure response times, and forwards the results to [`StatisticsAggregator`](src/statistics_aggregator.hpp:1).
-
-In parallel, [`ConsoleView`](src/console_view.hpp:1) periodically retrieves the current state from [`StatisticsAggregator`](src/statistics_aggregator.hpp:1) and refreshes the console display. This provides a continuously updated view of the runtime statistics for all monitored targets.
-
-# Contributing / Extensibility
-
-External contributions are welcome as long as they support the project’s objective: a robust, cross-platform, and easy-to-understand long-term ping statistics tool.
-
-A typical contribution workflow can look as follows:
-
-1. Fork the repository.
-2. Create a dedicated branch for your change (e.g., `feature/...` or `bugfix/...`).
-3. Implement your changes, including appropriate tests and/or manual verification (for example, across multiple platforms, where possible).
-4. Align code style and structure with the existing codebase (clear separation of logic, statistics, output, and platform abstraction).
-5. Open a merge request or pull request with a concise, informative description.
-
-Potentially useful extensions include, among others:
-
-- Exporting metrics in a Prometheus-compatible format (for example via a local HTTP endpoint or a text file) to feed the data into external monitoring systems.
-- A web-based user interface that visualizes the statistics in real time in a browser (e.g., with charts for latency over time, histograms, and per-target availability).
-- Additional console visualizations, such as percentile views (P95, P99), jitter calculations, or heat maps of latency over time.
-- Support for additional protocols and checks beyond ICMP, e.g., TCP port reachability, HTTP GET latency measurements, or TLS handshake times.
-- Configuration files (e.g., YAML or JSON) to conveniently manage a larger number of targets and settings.
+- ICMP may require elevated privileges depending on OS (root/CAP_NET_RAW on Linux/WSL, admin on Windows).
+- Doxygen docs: target `doxygen` is available when Doxygen is installed (`cmake --build <build> --target doxygen`).
 
 # License
 
 MIT License
-```

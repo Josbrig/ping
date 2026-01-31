@@ -3,9 +3,9 @@
 Welcome to the pingstats wiki. This page summarizes what the project does, how to build and run it, and where to find detailed documentation.
 
 ## Overview
-- Cross-platform C++20 ping tool that continuously measures latency and availability for multiple targets.
-- Collects per-target metrics (min/mean/median/max, loss, histograms, time series) and renders live console views.
-- Platform backends for Linux/macOS/WSL/Cygwin/MinGW with an extensible abstraction layer.
+- Cross-platform C++20/CMake ping tool for multiple targets, capturing latency and availability over time.
+- Per-target metrics: min/mean/median/max, loss, histograms, time series; live console views.
+- Platform backends for Linux, macOS, Windows (MSVC), WSL, Cygwin, MinGW via an extensible abstraction layer.
 
 ## Quick Start
 ### Build (Unix-like: Linux/macOS/WSL)
@@ -29,8 +29,11 @@ Adjust generator (e.g., Ninja) with `-G` if desired.
 Examples:
 - Single target: `./build/pingstats 8.8.8.8`
 - Multiple targets: `./build/pingstats 8.8.8.8 1.1.1.1 example.org`
+- CSV export: `./build/pingstats -i 1 --output-format=csv --output-file=pingstats.csv 8.8.8.8 1.1.1.1`
+- JSON export: `./build/pingstats -i 1 --output-format=json --output-file=pingstats.json 8.8.8.8`
 - Custom interval (seconds): `./build/pingstats -i 2 8.8.8.8 1.1.1.1`
 - Write CSV: `./build/pingstats -i 1 --output-format=csv --output-file=pingstats.csv 8.8.8.8`
+- Measurement runs continuously until interrupted (Ctrl+C).
 
 ## Features
 - Continuous ICMP echo measurements per target with configurable intervals.
@@ -45,6 +48,7 @@ See the detailed architecture write-up in [`docs/architecture.md`](docs/architec
 - Statistics: [`statistics_aggregator.hpp`](include/statistics_aggregator.hpp:1) maintains counters, histograms, and time series.
 - Console UI: [`console_view.hpp`](include/console_view.hpp:1) renders tables, series, and histograms.
 - Entry point: [`main.cpp`](src/main.cpp:1) wires configuration, backends, sessions, and the view.
+- Build/test matrices (Debug/Release/RelWithDebInfo), optional `doxygen` target, and user scripts are documented in [`README.md`](README.md:1).
 
 ## Testing
 Build then run the CTest suite from the build directory:

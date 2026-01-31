@@ -1,7 +1,7 @@
 <#!
 PowerShell helper to display agent rules before working on the project.
-Usage: ./scripts/read_rules.ps1
-Can be invoked from any directory; resolves project root relative to script location.
+Keeps output read-only; no side effects besides printing rules.
+Usage: ./scripts/read_rules.ps1 (can be run from any directory).
 !>
 
 Set-StrictMode -Version Latest

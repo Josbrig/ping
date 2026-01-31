@@ -1,70 +1,72 @@
-# Konzept: Konfiguration der Histogramm-Buckets (Build- und Startzeit)
+```markdown
+# Concept: Histogram Bucket Configuration (Build Time and Runtime)
 
-## Zielsetzung
-- Ermögliche zwei Wege zur Definition der Histogramm-Buckets:
-  1. **Build-/Compile-Zeit**: Vorgabedatei im Repository (wird mitgebaut/mitgeliefert), liefert Default-Buckets für alle Targets.
-  2. **Startzeit/CLI**: Parameter zur Laufzeit, um Buckets pro Aufruf zu setzen.
-- Klare Priorität: CLI > Compile-Time-Konfig > harter Fallback-Default.
+## Objective
+- Support two ways to define histogram buckets:
+  1. **Build/Compile time**: a default file in the repository (built/packaged) providing default buckets for all targets.
+  2. **Runtime/CLI**: parameters at startup to set buckets per invocation.
+- Clear precedence: CLI > compile-time config > hardcoded fallback default.
 
-## Ist-Stand
-- Fester Default `{10,20,50,100,200,500}` in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17); Hosts erhalten diesen Satz bei Anlage [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
-- Buckets werden bei Snapshot übernommen/gerendert [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:109) und in der Konsole dargestellt [`console_view_impl.cpp`](src/console_view_impl.cpp:212); Export nutzt dieselben Werte [`json_exporter.cpp`](src/json_exporter.cpp:78).
-- CLI kennt keine Bucket-Option; `TargetConfig.bucket_boundaries` existiert, wird aber nie gesetzt [`config.hpp`](include/config.hpp:15) [`main.cpp`](src/main.cpp:198).
-- PingSession übernimmt TargetConfig unverändert; Buckets müssen vor Session-Erzeugung feststehen [`ping_session.cpp`](src/ping_session.cpp:14).
+## Current State
+- Fixed default `{10,20,50,100,200,500}` in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:17); hosts receive this set when created [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:44).
+- Buckets are applied/rendered on snapshot [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:109) and shown in the console [`console_view_impl.cpp`](src/console_view_impl.cpp:212); export uses the same values [`json_exporter.cpp`](src/json_exporter.cpp:78).
+- CLI has no bucket option; `TargetConfig.bucket_boundaries` exists but is never set [`config.hpp`](include/config.hpp:15) [`main.cpp`](src/main.cpp:198).
+- PingSession takes TargetConfig as-is; buckets must be finalized before session creation [`ping_session.cpp`](src/ping_session.cpp:14).
 
-## Anforderungen & Annahmen
-- Eingaben: aufsteigende, nicht-leere Liste nicht-negativer Double-Werte.
-- Anzahl Buckets begrenzen (z. B. max 64), Duplikate entfernen/ablehnen.
-- Fehlerhaftes Input führt zu klarer CLI-Fehlermeldung und Exit-Code ≠ 0; kein stilles Fallback, außer wenn Option fehlt.
-- Thread-Safety: Buckets werden nur bei Host-Anlage gelesen; bestehende Mutex-Logik bleibt ausreichend, solange Buckets vor Session-Start final sind.
+## Requirements and Assumptions
+- Inputs: ascending, non-empty list of non-negative doubles.
+- Limit bucket count (e.g., max 64); remove/reject duplicates.
+- Invalid input leads to a clear CLI error message and exit code ≠ 0; no silent fallback unless the option is absent.
+- Thread safety: buckets are read only at host creation; existing mutex logic is sufficient as long as buckets are final before sessions start.
 
-## Weg 1: Compile-Time-Konfiguration über Datei
-- **Datei**: `config/buckets_default.json` (oder `.yaml`), wird im Repo gepflegt und vom Build (CMake) ins Ausgabeverzeichnis kopiert/installiert.
-- **Format (JSON-Beispiel)**:
+## Path 1: Compile-Time Configuration via File
+- **File**: `config/buckets_default.json` (or `.yaml`), maintained in-repo and copied/installed by the build (CMake) into the output directory.
+- **Format (JSON example)**:
   ```json
   {
     "bucket_boundaries": [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000]
   }
   ```
-- **Ladepunkt**: Startup in `main` vor Target-Erzeugung:
-  - Pfad ableiten relativ zum Executable (z. B. `./config/buckets_default.json`) oder über Option `--config-file` überschreibbar.
-  - Bei erfolgreichem Laden und Validierung werden die Grenzen als globaler Default gesetzt.
-  - Bei fehlender Datei/Parsing-Fehler → warnen und auf hart codierten Fallback zurückfallen (kein Crash).
+- **Load point**: startup in `main` before target creation:
+  - Derive path relative to the executable (e.g., `./config/buckets_default.json`) or override via `--config-file`.
+  - On successful load/validation, set these boundaries as the global default.
+  - If missing/parse error → warn and fall back to the hardcoded default (no crash).
 - **Integration**:
-  - Utility-Funktion `load_bucket_defaults_from_file(path) -> std::vector<double>` mit Validierung.
-  - In `parse_arguments` optionalen Parameter `--config-file <path>` hinzufügen (nur für Bucket-Defaults nötig, erweiterbar).
-  - Beim Bau der `TargetConfig` (vor `make_ping_session`) den geladenen Satz übernehmen, sofern kein CLI-Override kommt.
+  - Utility `load_bucket_defaults_from_file(path) -> std::vector<double>` with validation.
+  - Add optional parameter `--config-file <path>` in `parse_arguments` (initially for bucket defaults, extendable).
+  - When building `TargetConfig` (before `make_ping_session`), adopt the loaded set unless a CLI override is provided.
 
-## Weg 2: Startzeit/CLI-Override
+## Path 2: Runtime/CLI Override
 - **Option**: `--bucket-boundaries <list|preset>`
-  - Liste: Komma-separiert, z. B. `--bucket-boundaries 0.5,1,2,5,10,20,50,100,200,500,1000`
-  - Presets (optional, falls gewünscht): `fine`, `log`, `coarse`; werden auf fest definierte Tabellen gemappt.
+  - List: comma-separated, e.g., `--bucket-boundaries 0.5,1,2,5,10,20,50,100,200,500,1000`
+  - Presets (optional): `fine`, `log`, `coarse`; mapped to predefined tables.
 - **Parsing**:
-  - Split nach Komma, `std::stod`, negative Werte ablehnen, aufsteigende Sortierung prüfen (oder sortieren und Duplikate entfernen mit Warnung).
-  - Max-Länge prüfen (z. B. 64 Elemente); leere Liste ablehnen.
-- **Anwendung**:
-  - CLI-Wert pro Prozesslauf global anwenden (gleicher Satz für alle Targets); wenn künftig pro Host erforderlich, CLI könnte mehrfach angegeben werden, aktuell nicht nötig.
-  - Precedence: Wenn Option gesetzt, überschreibt sie Compile-Time-Datei und den hart codierten Fallback.
-- **Fehlerfälle**:
-  - Ungültige Zahl/Sortierung → Fehlertext und Exit.
-  - Zu viele Buckets → Fehlertext und Exit.
+  - Split by comma, use `std::stod`, reject negatives, enforce ascending order (or sort and deduplicate with a warning).
+  - Enforce max length (e.g., 64 elements); reject empty lists.
+- **Application**:
+  - Apply the CLI value globally per process run (same set for all targets); if per-host is needed later, CLI could support multiple uses—currently not required.
+  - Precedence: if the option is set, it overrides the compile-time file and hardcoded fallback.
+- **Error cases**:
+  - Invalid number/order → error message and exit.
+  - Too many buckets → error message and exit.
 
-## Validierung & Fehlerbehandlung
-- Gemeinsame Validator-Funktion für alle Quellen (CLI, Datei):
-  - Nicht-leer, strikt aufsteigend, keine `NaN/Inf`, keine negativen Werte, Max-Länge.
-- Logging/Warnungen: Datei fehlt → Hinweis + Fallback; CLI-Fehler → abort mit Message.
+## Validation and Error Handling
+- Shared validator for all sources (CLI, file):
+  - Non-empty, strictly ascending, no `NaN/Inf`, no negatives, enforce max length.
+- Logging/warnings: missing file → warn and fallback; CLI errors → abort with message.
 
-## Thread-Safety
-- Buckets werden nur beim Host-Setup verwendet; solange Konfiguration vor Start der Sessions feststeht, genügt die bestehende Mutex-Synchronisation in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:122).
-- Keine Laufzeitänderung vorgesehen; daher kein Re-Binning nötig.
+## Thread Safety
+- Buckets are used only during host setup; as long as configuration is finalized before sessions start, existing mutex synchronization in [`statistics_aggregator.cpp`](src/statistics_aggregator.cpp:122) is sufficient.
+- No runtime change is planned; no re-binning needed.
 
-## Offene Punkte
-- Pfadstrategie für `config/buckets_default.json` unter Windows/macOS/Linux (Install-/Run-Layout klären).
-- Ob Presets benötigt werden oder nur freie Listen.
-- Ob pro Host unterschiedliche Buckets später erforderlich sind.
+## Open Points
+- Path strategy for `config/buckets_default.json` across Windows/macOS/Linux (clarify install/run layout).
+- Whether presets are required or only free-form lists.
+- Whether per-host buckets are needed later.
 
-## Umsetzungsschritte (architekturorientiert)
-- CLI erweitern (`parse_arguments`): neue Option `--bucket-boundaries`; optional `--config-file`.
-- Loader/Validator implementieren (Datei + CLI) und Fallback-Kaskade festlegen (CLI > Datei > Default).
-- `TargetConfig` beim Bau mit finalen Boundaries füllen; `StatisticsAggregator` damit initialisieren.
-- Tests: Parsing/Validierung, Aggregator mit Custom-Buckets, Fehlerszenarien.
+## Implementation Steps (architecture-oriented)
+- Extend CLI (`parse_arguments`): new option `--bucket-boundaries`; optional `--config-file`.
+- Implement loader/validator (file + CLI) and define fallback cascade (CLI > file > default).
+- Populate `TargetConfig` with final boundaries during construction; initialize `StatisticsAggregator` with them.
+- Tests: parsing/validation, aggregator with custom buckets, error scenarios.
+```

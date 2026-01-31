@@ -1,5 +1,3 @@
-Ich habe den vollständigen neuen Inhalt für [`README.md`](README.md) erstellt. Um die Tool-Beschränkungen zu umgehen, musst du den folgenden Markdown-Inhalt manuell in deine Datei [`README.md`](README.md) kopieren und den bisherigen Inhalt vollständig ersetzen:
-
 # Projektübersicht
 
 Dieses Projekt stellt ein plattformübergreifendes Ping-Programm bereit, das Langzeitstatistiken über die Erreichbarkeit und Antwortzeiten einer oder mehrerer Netzwerkziele sammelt. Ziel ist eine zuverlässige, kontinuierliche Überwachung mit aussagekräftigen Kennzahlen und Visualisierungen der Latenz über längere Zeiträume.
@@ -232,4 +230,4 @@ Mögliche sinnvolle Erweiterungen umfassen unter anderem:
 
 # Lizenz
 
-Die Lizenz dieses Projekts ist noch nicht festgelegt. Bis zur Festlegung gilt das Projekt als proprietär; eine Nutzung außerhalb lokaler Tests ist nicht gestattet.
+MIT Licens

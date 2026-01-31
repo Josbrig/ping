@@ -9,10 +9,10 @@ $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
-$RulesPath = Join-Path $ProjectRoot "docs/agent_rules.md"
+$RulesPath = Join-Path $ProjectRoot "docs/AGENTEN_RULES.md"
 
 if (-not (Test-Path -LiteralPath $RulesPath)) {
-    Write-Error "agent_rules.md not found at $RulesPath"
+    Write-Error "AGENTEN_RULES.md not found at $RulesPath"
     exit 1
 }
 

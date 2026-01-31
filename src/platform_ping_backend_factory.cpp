@@ -14,6 +14,7 @@ namespace pingstats {
 
 namespace {
 
+/// Fallback backend used on unsupported platforms; always reports failure.
 class NullPingBackend final : public PlatformPingBackend {
 public:
     void initialize() override {}
@@ -25,6 +26,7 @@ public:
 
 } // namespace
 
+/// Select platform-specific backend (Linux/macOS/Windows); otherwise return null backend.
 std::unique_ptr<PlatformPingBackend> make_platform_ping_backend() {
 #if defined(__APPLE__)
     return std::make_unique<MacOsPingBackend>();

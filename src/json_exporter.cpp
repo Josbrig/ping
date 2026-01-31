@@ -11,6 +11,7 @@ namespace pingstats {
 
 namespace {
 
+/// Format a time point as ISO-like timestamp for JSON.
 std::string format_timestamp(std::chrono::system_clock::time_point tp)
 {
     using clock = std::chrono::system_clock;
@@ -26,6 +27,7 @@ std::string format_timestamp(std::chrono::system_clock::time_point tp)
     return oss.str();
 }
 
+/// Escape a string for JSON output (basic control chars and quotes/backslashes).
 std::string escape_json(const std::string& s)
 {
     std::ostringstream oss;
@@ -52,6 +54,8 @@ std::string escape_json(const std::string& s)
 
 }  // namespace
 
+/// Write full JSON document with timestamp, per-host stats, histogram buckets, and recent RTTs.
+/// Truncates the file each time to present a fresh snapshot.
 void write_snapshots_json(const std::string& path,
                           const std::vector<StatisticsSnapshot>& snapshots,
                           std::chrono::system_clock::time_point timestamp)

@@ -22,11 +22,16 @@ namespace pingstats {
 
 namespace {
 
+/// ICMP protocol number used for raw sockets.
 constexpr int kIcmpProtocol = IPPROTO_ICMP;
+/// ICMP header size in bytes.
 constexpr std::size_t kIcmpHeaderSize = sizeof(icmphdr);
-constexpr std::size_t kPayloadSize = 56; // bytes, klassisch wie ping(8)
+/// Payload size in bytes (traditional ping default).
+constexpr std::size_t kPayloadSize = 56;
+/// Total packet size (header + payload).
 constexpr std::size_t kPacketSize = kIcmpHeaderSize + kPayloadSize;
 
+/// Internet checksum helper for ICMP messages.
 std::uint16_t checksum(const void* data, std::size_t len) {
     const std::uint16_t* buf = static_cast<const std::uint16_t*>(data);
     std::uint32_t sum = 0;
@@ -51,6 +56,7 @@ LinuxPingBackend::~LinuxPingBackend() {
     shutdown();
 }
 
+/// Open raw ICMP socket; requires CAP_NET_RAW/root.
 void LinuxPingBackend::initialize() {
     if (initialized_) {
         return;
@@ -65,6 +71,7 @@ void LinuxPingBackend::initialize() {
     initialized_ = true;
 }
 
+/// Close the socket and reset flags; safe to call multiple times.
 void LinuxPingBackend::shutdown() {
     if (sock_fd_ >= 0) {
         ::close(sock_fd_);
@@ -73,6 +80,7 @@ void LinuxPingBackend::shutdown() {
     initialized_ = false;
 }
 
+/// Send an ICMP Echo and await a reply; maps timeouts/errors to success=false.
 PlatformPingBackend::PingResult LinuxPingBackend::send_ping(std::string_view host, std::chrono::milliseconds timeout) {
     if (!initialized_) {
         throw std::runtime_error("LinuxPingBackend not initialized");

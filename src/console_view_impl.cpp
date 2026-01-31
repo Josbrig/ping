@@ -15,15 +15,21 @@
 namespace pingstats {
 
 namespace {
+/// ANSI escape to clear screen and home cursor for a clean redraw.
 constexpr const char* CLEAR_SCREEN = "\x1b[2J\x1b[H";
+/// Column widths tuned for readable table alignment.
 constexpr std::size_t TABLE_HOST_WIDTH = 20;
 constexpr std::size_t TABLE_NUMBER_WIDTH = 8;
+/// Sparkline width for recent RTT visualization.
 constexpr std::size_t SPARKLINE_WIDTH = 40;
+/// Width of histogram bars when rendered in text.
 constexpr std::size_t HISTOGRAM_BAR_WIDTH = 30;
 constexpr std::size_t LOSS_PERCENT_PRECISION = 1;
 constexpr std::size_t MS_PRECISION = 1;
+/// Characters from low to high intensity for sparklines.
 constexpr const char* SPARK_CHARS = " .:-=+*#%@";  // 10 levels low->high
 
+/// Local-time timestamp for display in the header.
 std::string format_time_now()
 {
     using clock = std::chrono::system_clock;
@@ -40,6 +46,7 @@ std::string format_time_now()
     return oss.str();
 }
 
+/// Left-align a value into a fixed-width field to keep columns aligned.
 template <typename T>
 std::string pad_right(const T& value, std::size_t width)
 {
@@ -48,6 +55,7 @@ std::string pad_right(const T& value, std::size_t width)
     return oss.str();
 }
 
+/// Format milliseconds with fixed precision, used across views.
 std::string format_ms(double value)
 {
     std::ostringstream oss;
@@ -79,6 +87,7 @@ void ConsoleViewImpl::render_header() const
     std::cout << std::string(80, '=') << "\n";
 }
 
+/// Render a number or '-' when data is missing/invalid.
 std::string ConsoleViewImpl::format_double_or_dash(double value, bool has_value)
 {
     if (!has_value || std::isnan(value) || std::isinf(value)) {
@@ -87,6 +96,7 @@ std::string ConsoleViewImpl::format_double_or_dash(double value, bool has_value)
     return format_ms(value);
 }
 
+/// Render packet loss as percentage with fixed precision.
 std::string ConsoleViewImpl::format_loss(double loss_ratio, bool has_value)
 {
     if (!has_value || loss_ratio < 0.0) {

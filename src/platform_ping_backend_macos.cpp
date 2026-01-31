@@ -23,10 +23,14 @@ namespace pingstats {
 
 namespace {
 
+/// ICMP protocol number for macOS datagram sockets.
 constexpr int kIcmpProtocol = IPPROTO_ICMP;
-constexpr std::size_t kPayloadSize = 56; // bytes, klassisch wie ping(8)
+/// Payload size in bytes (traditional ping default).
+constexpr std::size_t kPayloadSize = 56;
+/// Total packet size (ICMP header + payload).
 constexpr std::size_t kPacketSize = sizeof(icmp) + kPayloadSize;
 
+/// Internet checksum helper for ICMP messages.
 std::uint16_t checksum(const void* data, std::size_t len) {
     const std::uint16_t* buf = static_cast<const std::uint16_t*>(data);
     std::uint32_t sum = 0;
@@ -51,6 +55,7 @@ MacOsPingBackend::~MacOsPingBackend() {
     shutdown();
 }
 
+/// Open ICMP datagram socket; requires root/entitlement.
 void MacOsPingBackend::initialize() {
     if (initialized_) {
         return;
@@ -65,6 +70,7 @@ void MacOsPingBackend::initialize() {
     initialized_ = true;
 }
 
+/// Close socket and reset state; idempotent.
 void MacOsPingBackend::shutdown() {
     if (sock_fd_ >= 0) {
         ::close(sock_fd_);
@@ -73,6 +79,7 @@ void MacOsPingBackend::shutdown() {
     initialized_ = false;
 }
 
+/// Send ICMP Echo, await reply with select, validate identifiers, and return success/RTT.
 PlatformPingBackend::PingResult MacOsPingBackend::send_ping(std::string_view host, std::chrono::milliseconds timeout) {
     if (!initialized_) {
         throw std::runtime_error("MacOsPingBackend not initialized");

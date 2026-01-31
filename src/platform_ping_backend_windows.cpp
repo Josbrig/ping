@@ -18,11 +18,13 @@ namespace pingstats {
 
 namespace {
 
+/// Buffer layout used to capture ICMP echo replies with payload.
 struct IcmpEchoReply {
     ICMP_ECHO_REPLY reply;
     unsigned char data[64];
 };
 
+/// Helper to throw std::system_error for the last WSA error.
 void throw_last_error(const char* msg) {
     const auto err = ::WSAGetLastError();
     throw std::system_error(err, std::system_category(), msg);
@@ -37,6 +39,7 @@ WindowsPingBackend::~WindowsPingBackend() {
     }
 }
 
+/// Initialize Winsock and create ICMP handle; throws on failures.
 void WindowsPingBackend::initialize() {
     if (initialized_) {
         return;
@@ -56,6 +59,7 @@ void WindowsPingBackend::initialize() {
     initialized_ = true;
 }
 
+/// Close ICMP handle and reset state; safe to call multiple times.
 void WindowsPingBackend::shutdown() {
     if (icmp_handle_ && icmp_handle_ != INVALID_HANDLE_VALUE) {
         ::IcmpCloseHandle(icmp_handle_);
@@ -64,6 +68,7 @@ void WindowsPingBackend::shutdown() {
     initialized_ = false;
 }
 
+/// Resolve host to IPv4: try literal first, then DNS; throws on failure.
 void WindowsPingBackend::resolve_host(std::string_view host, unsigned long& out_ipv4) const {
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
@@ -83,6 +88,7 @@ void WindowsPingBackend::resolve_host(std::string_view host, unsigned long& out_
     }
 }
 
+/// Send an ICMP Echo via WinAPI, map timeouts to success=false, and return RTT.
 PlatformPingBackend::PingResult WindowsPingBackend::send_ping(std::string_view host, std::chrono::milliseconds timeout) {
     if (!initialized_) {
         throw std::runtime_error("WindowsPingBackend not initialized");

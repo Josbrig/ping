@@ -9,8 +9,8 @@ namespace pingstats {
 class PlatformPingBackend;
 class StatisticsAggregator;
 
-// Manages the lifecycle of pinging a single target.
-// Thread-safety: control methods should be synchronized by callers if shared across threads.
+/// Manages the lifecycle of pinging a single target.
+/// Thread-safety: callers must synchronize start/stop/set_interval when shared.
 class PingSession {
 public:
     PingSession(TargetConfig target,
@@ -23,25 +23,26 @@ public:
     PingSession(PingSession&&) = default;
     PingSession& operator=(PingSession&&) = default;
 
-    // Start periodic pinging for the configured target.
+    /// Start periodic pinging for the configured target.
     virtual void start() = 0;
 
-    // Stop the ongoing pinging activity.
+    /// Stop the ongoing pinging activity and release resources.
     virtual void stop() = 0;
 
-    // Adjust the interval between pings in seconds.
+    /// Adjust the interval between pings in seconds.
     virtual void set_interval(double seconds) = 0;
 
-    // Access the immutable target configuration.
+    /// Access the immutable target configuration.
     [[nodiscard]] virtual const TargetConfig& get_target() const = 0;
 
 protected:
-    // Implementations may hold worker thread/task handles; no storage defined here.
+    /// Implementations may hold worker thread/task handles; no storage defined here.
     TargetConfig target_;
     std::shared_ptr<PlatformPingBackend> backend_;
     std::shared_ptr<StatisticsAggregator> aggregator_;
 };
 
+/// Factory to create a platform-specific ping session bound to backend and aggregator.
 std::unique_ptr<PingSession> make_ping_session(TargetConfig target,
                                                std::shared_ptr<PlatformPingBackend> backend,
                                                std::shared_ptr<StatisticsAggregator> aggregator);

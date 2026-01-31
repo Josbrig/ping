@@ -22,11 +22,16 @@ namespace pingstats {
 
 namespace {
 
+/// Default CLI ping interval in seconds when the user does not provide one.
 constexpr double kDefaultIntervalSeconds = 1.0;
+/// Refresh cadence for the console renderer to keep the UI responsive.
 constexpr auto kDefaultRenderPeriod = std::chrono::milliseconds{500};
+/// Program version shown with --version; kept in one place for consistency.
 constexpr std::string_view kVersion = "0.1.0";
+/// Period for periodic CSV export when enabled.
 constexpr auto kDefaultExportPeriod = std::chrono::seconds{5};
 
+/// Parsed command-line options, kept optional until defaults are applied.
 struct CliOptions {
     std::optional<double> interval_s;
     std::optional<OutputFormat> output_format;
@@ -36,10 +41,14 @@ struct CliOptions {
     bool show_version{false};
 };
 
+/// Centralized helper to signal CLI errors uniformly.
+/// Throws runtime_error to let the caller map to exit code 1.
 [[noreturn]] void throw_cli_error(const std::string& msg) {
     throw std::runtime_error(msg);
 }
 
+/// Render usage/help text to the provided stream.
+/// No return value because the function is purely for user feedback.
 void print_usage(std::ostream& os, const char* prog_name) {
     os << "Usage: " << prog_name << " [options] <host1> [host2 ...]\n"
        << "Options:\n"
@@ -51,6 +60,7 @@ void print_usage(std::ostream& os, const char* prog_name) {
        << "  --output-file <path>     Path to export aggregated statistics\n";
 }
 
+/// Map a string to the OutputFormat enum, rejecting unknown inputs early.
 OutputFormat parse_output_format(const std::string& value) {
     if (value == "none") {
         return OutputFormat::None;
@@ -64,6 +74,7 @@ OutputFormat parse_output_format(const std::string& value) {
     throw_cli_error("Unknown output format: " + value);
 }
 
+/// Parse all CLI arguments into structured options; stops early for help/version.
 CliOptions parse_arguments(int argc, char** argv) {
     CliOptions opts;
     for (int i = 1; i < argc; ++i) {
@@ -116,11 +127,13 @@ CliOptions parse_arguments(int argc, char** argv) {
     return opts;
 }
 
+/// Convenience bundle that keeps backend lifetime aligned with its session.
 struct SessionBundle {
     std::shared_ptr<PlatformPingBackend> backend;
     std::unique_ptr<PingSession> session;
 };
 
+/// Lightweight background loop that persists CSV snapshots periodically.
 class CsvExporterLoop {
 public:
     CsvExporterLoop(std::shared_ptr<StatisticsAggregator> aggregator,
@@ -130,6 +143,7 @@ public:
     {
     }
 
+    /// Start exporting if not already running; idempotent to avoid duplicate threads.
     void start()
     {
         if (running_) {
@@ -149,6 +163,7 @@ public:
         });
     }
 
+    /// Signal the worker to stop and join to ensure clean shutdown.
     void stop()
     {
         running_ = false;
@@ -169,6 +184,8 @@ private:
 
 }  // namespace
 
+/// Program entry in namespace scope: wires CLI, backends, sessions, exporters, and UI.
+/// Returns standard exit codes (0 success, 2 usage error, 1 runtime error).
 int run(int argc, char** argv) {
     try {
         auto opts = parse_arguments(argc, argv);

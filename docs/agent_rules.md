@@ -1,105 +1,102 @@
-Gern, Jörg.  
-Hier ist eine **bereinigte, klar strukturierte, KI‑Agenten‑Regeldatei**, in der **alles Überflüssige entfernt** wurde.  
-Sie enthält **nur das**, was ein KI‑Agent wirklich als verbindliche Regeln braucht – ohne Implementierungsdetails, ohne Architektur‑Doku, ohne Skript‑Erklärungen.
+Du hast völlig recht, Jörg.  
+Wenn das Ziel ein **Regelwerk für das Verhalten eines KI‑Agenten** ist, dann gehören dort **keine Projekt‑Details** hinein – keine Build‑Befehle, keine CLI‑Spezifikationen, keine Komponentenbeschreibungen.  
 
-Wenn du möchtest, kann ich sie auch direkt in **DokuWiki‑Format** umwandeln.
+Ein KI‑Agenten‑Regelwerk sollte ausschließlich beantworten:
+
+- *Wie soll der Agent arbeiten?*  
+- *Wie soll er dokumentieren?*  
+- *Wie soll er mit TODOs umgehen?*  
+- *Wie soll er Prompts archivieren?*  
+- *Wie soll er sich verhalten, wenn er Code generiert?*  
+- *Wie soll er mit Fehlern umgehen?*  
+
+Alles andere ist **Projekt‑Doku**, nicht Agenten‑Verhalten.
+
+Ich erstelle dir jetzt eine **neue, saubere Version**, die **nur** Agenten‑Verhaltensregeln enthält – ohne jegliche Projekt‑Details.
 
 ---
 
-# **KI‑Agenten Regeln für dieses Projekt (bereinigte Version)**
+# **KI‑Agenten‑Verhaltensregeln (reine Version, ohne Projektdetails)**
 
-## **1. Regeln für jeden Prompt**
-- Jeder Prompt muss archiviert werden.  
-- Speicherort: `docs/prompts/`
+## **1. Prompt‑Archivierung**
+- Jeder Prompt wird archiviert.  
 - Archiviert werden:
   - Prompt  
   - Rückfragen  
   - Antworten  
   - Ausgaben  
-- Wenn Ausgaben in Dateien geschrieben wurden: **nur den Dateinamen referenzieren**.
+- Speicherort: `docs/prompts/`
+- Wenn Ausgaben in Dateien geschrieben wurden: **nur Dateinamen referenzieren**.
 - Dateiname:  
-  `NNN_YYYYMMDD_HHMMSS_KurzerName.md`  
-  (NNN = laufende Nummer)
+  `NNN_YYYYMMDD_HHMMSS_KurzerName.md`
 
 ---
 
-## **2. Build & Test Regeln**
-- Konfigurieren:  
-  `cmake -S . -B build`
-- Bauen:  
-  `cmake --build build --config <Debug|Release>`
-- Tests ausführen:  
-  `ctest --test-dir build --build-config <Config> --output-on-failure`
-- Target `run_tests` führt `ctest` automatisch mit `--output-on-failure` aus.
-- Testprogramme:
-  - dürfen **nicht** gegen das Executable `pingstats` linken  
-  - binden benötigte Quellen direkt ein  
-  - linken gegen `Catch2::Catch2WithMain`
-
----
-
-## **3. CLI‑Regeln**
-- Erlaubte Flags:
-  - `-i`, `--interval <sekunden>`
-  - `--output-format none|csv|json`
-  - `--output-file <pfad>`
-  - `-h`, `--help`
-  - `--version`
-- Alle anderen Argumente sind Hostnamen.
-- Standardwerte:
-  - Intervall: 1.0 s  
-  - Render‑Intervall: 500 ms
-- Wenn `--output-file` gesetzt ist, aber kein Format:
-  - Format = CSV
-- Exportregeln:
-  - CSV: alle 5 s + final  
-  - JSON: nur final
-
----
-
-## **4. Komponenten‑Regeln (nur Verhalten, keine Details)**
-### **PingSession**
-- Läuft in eigenem Thread  
-- Führt periodische Pings aus  
-- Exceptions zählen als Fehlschlag  
-- Jede Messung wird mit `add_sample` gespeichert
-
-### **StatisticsAggregator**
-- Berechnet grundlegende Statistiken  
-- Thread‑safe (Mutex)
-
-### **ConsoleView**
-- Nutzt `snapshot_all()`  
-- Sortiert Hosts  
-- Läuft in eigenem Thread  
-- Kann über `stop()` beendet werden
-
----
-
-## **5. Reports**
-- Format: Markdown  
-- Speicherort: `docs/Reports/`
+## **2. Report‑Regeln**
+- Jeder Report wird im Ordner `docs/Reports/` abgelegt.
+- Format: Markdown.
 - Dateiname:  
   `Report_YYYYMMDD_HHMMSS_Name.md`
+- Reports müssen vollständig, nachvollziehbar und reproduzierbar sein.
 
 ---
 
-## **6. TODO‑Regeln**
+## **3. TODO‑Regeln**
 - Hauptpunkte: nummeriert (1, 2, 3, …)
 - Unterpunkte: große Buchstaben (A, B, C, …)
 - Unter‑Unterpunkte: römische Zahlen (I, II, III, …)
-- Jeder Punkt hat ein Kästchen:
+- Jeder Punkt hat ein Status‑Kästchen:
   - `[ ]` offen  
   - `[x]` erledigt
-- Der KI‑Agent markiert erledigte Punkte **selbstständig**.
+- Der KI‑Agent markiert erledigte Punkte **selbstständig**, sobald die Aufgabe erfüllt ist.
+- Einträge dürfen **erweitert**, aber niemals gelöscht werden.
 
 ---
 
-## **7. AgentTodo‑Regeln**
-- Einträge **erweitern**, niemals löschen  
-- Build‑/Test‑Einträge nach OS/Compiler gruppieren  
-- Nach erfolgreicher Umsetzung: als erledigt markieren
+## **4. Arbeitsweise des KI‑Agenten**
+- Der Agent arbeitet **schrittweise, nachvollziehbar und dokumentiert**.
+- Der Agent erzeugt **keine stillen Änderungen**.  
+  Jede Änderung wird im Report dokumentiert.
+- Der Agent erzeugt **keine Dateien**, ohne sie im Report zu erwähnen.
+- Der Agent hält sich strikt an die Struktur des Projekts.
+- Der Agent fragt nach, wenn Informationen fehlen.
+- Der Agent erzeugt Code nur, wenn:
+  - der Zweck klar ist  
+  - die Anforderungen eindeutig sind  
+  - die Ziel‑Datei oder der Ziel‑Ort definiert ist  
+- Der Agent überschreibt niemals Dateien ohne explizite Anweisung.
 
 ---
 
+## **5. Fehler‑ und Konfliktverhalten**
+- Wenn Anforderungen unklar sind → Rückfrage.
+- Wenn Anforderungen widersprüchlich sind → Konflikt benennen und Lösung vorschlagen.
+- Wenn der Agent etwas nicht ausführen kann → Grund nennen und Alternativen anbieten.
+- Wenn der Agent eine Aufgabe abschließt → im TODO‑System abhaken.
+
+---
+
+## **6. Konsistenz‑Regeln**
+- Der Agent hält sich an:
+  - die Projektstruktur  
+  - die Dokumentationsstruktur  
+  - die Namenskonventionen  
+  - die Archivierungsregeln  
+- Der Agent erzeugt konsistenten Stil:
+  - klare Sprache  
+  - reproduzierbare Schritte  
+  - nachvollziehbare Entscheidungen  
+
+---
+
+## **7. Selbstkontrolle**
+Vor jeder Aufgabe prüft der Agent:
+
+1. **Gehört diese Aufgabe in einen Report?**  
+2. **Muss ein TODO‑Punkt aktualisiert werden?**  
+3. **Sind alle Informationen vorhanden?**  
+4. **Ist die Ausgabe reproduzierbar?**  
+5. **Ist die Dokumentation vollständig?**
+
+---
 

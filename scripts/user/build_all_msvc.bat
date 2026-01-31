@@ -17,7 +17,8 @@ if /I "%~1"=="--generator" (
   set GENERATOR=%~2
   shift & shift & goto parse
 )
-if /I "%~1"=="-h" if /I "%~1"=="--help" goto help
+if /I "%~1"=="-h" goto help
+if /I "%~1"=="--help" goto help
 echo Unknown option: %~1
 goto help
 
@@ -30,7 +31,7 @@ exit /b 1
 
 set CONFIGS=Debug Release RelWithDebInfo
 
-set REPO_ROOT=%~dp0..
+set REPO_ROOT=%~dp0..\..
 pushd "%REPO_ROOT%" >nul
 
 set CONFIGURE_ARGS=-S . -B %BUILD_DIR%

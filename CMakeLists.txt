@@ -30,10 +30,13 @@ find_package(Doxygen QUIET)
 if(DOXYGEN_FOUND)
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+    set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/doxygen)
+    set(DOXYGEN_WARN_LOG ${DOXYGEN_OUTPUT_DIR}/doxygen-warnings.log)
 
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
 
     add_custom_target(doxygen
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen"

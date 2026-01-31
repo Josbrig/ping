@@ -2,7 +2,7 @@
 
 PROJECT_NAME           = "pingstats"
 PROJECT_BRIEF          = "Cross-platform ping statistics tool"
-OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs/doxygen
+OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIR@
 CREATE_SUBDIRS         = YES
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/include \
@@ -12,7 +12,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/include \
                           @CMAKE_CURRENT_SOURCE_DIR@/docs/documentation/src_overview.md \
                           @CMAKE_CURRENT_SOURCE_DIR@/CMakeLists.txt
 FILE_PATTERNS          = *.hpp *.cpp *.md CMakeLists.txt *.cmake
-EXTENSION_MAPPING      = CMakeLists.txt=cmake cmake=cmake
+EXTENSION_MAPPING      = CMakeLists.txt=CMake cmake=CMake
 RECURSIVE              = YES
 
 EXTRACT_ALL            = YES
@@ -27,7 +27,7 @@ GENERATE_MAN           = NO
 
 QUIET                  = YES
 WARN_IF_UNDOCUMENTED   = NO
-WARN_LOGFILE           = @CMAKE_CURRENT_BINARY_DIR@/docs/doxygen/doxygen-warnings.log
+WARN_LOGFILE           = @DOXYGEN_WARN_LOG@
 
 HTML_OUTPUT            = html
 

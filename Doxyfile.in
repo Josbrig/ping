@@ -26,6 +26,21 @@ WARN_IF_UNDOCUMENTED   = NO
 WARN_LOGFILE           = @CMAKE_CURRENT_BINARY_DIR@/docs/doxygen/doxygen-warnings.log
 
 HTML_OUTPUT            = html
-HTML_TIMESTAMP         = NO
+
+HAVE_DOT               = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+GROUP_GRAPHS           = YES
+UML_LOOK               = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+DIRECTORY_GRAPH        = YES
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
+DOT_GRAPH_MAX_NODES    = 100
+DOT_MULTI_TARGETS      = YES
+DOT_CLEANUP            = YES
 
 STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@

@@ -11,6 +11,7 @@ namespace pingstats {
 
 namespace {
 
+/// Format a time point as human-readable timestamp for CSV.
 std::string format_timestamp(std::chrono::system_clock::time_point tp)
 {
     using clock = std::chrono::system_clock;
@@ -28,6 +29,8 @@ std::string format_timestamp(std::chrono::system_clock::time_point tp)
 
 }  // namespace
 
+/// Append statistics snapshots to a CSV file; creates header on first write.
+/// Skips work when no snapshots are available; throws if the file cannot be opened.
 void write_snapshots_csv_append(const std::string& path,
                                 const std::vector<StatisticsSnapshot>& snapshots,
                                 std::chrono::system_clock::time_point timestamp)

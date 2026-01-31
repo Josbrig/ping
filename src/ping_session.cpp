@@ -19,6 +19,7 @@ PingSession::PingSession(TargetConfig target,
 
 namespace {
 
+/// Concrete ping session that owns a worker thread and supports live interval updates.
 class PingSessionImpl final : public PingSession {
 public:
     PingSessionImpl(TargetConfig target,
@@ -30,6 +31,7 @@ public:
 
     ~PingSessionImpl() override { stop(); }
 
+    /// Start the periodic ping loop if not already running.
     void start() override
     {
         bool expected = false;
@@ -39,6 +41,7 @@ public:
         worker_ = std::thread(&PingSessionImpl::run_loop, this);
     }
 
+    /// Stop the loop and join the worker to ensure backend/aggregator safety.
     void stop() override
     {
         running_.store(false);
@@ -47,6 +50,7 @@ public:
         }
     }
 
+    /// Update the interval (seconds), clamped to avoid excessive request rates.
     void set_interval(double seconds) override
     {
         constexpr double kMinInterval = 0.1;
@@ -57,6 +61,7 @@ public:
     [[nodiscard]] const TargetConfig& get_target() const override { return target_; }
 
 private:
+    /// Worker loop: performs ping, records results, and sleeps remaining interval.
     void run_loop()
     {
         while (running_.load()) {

@@ -1,12 +1,14 @@
+## Fetch Catch2 from internal mirror
 include(FetchContent)
 
 FetchContent_Declare(
     Catch2
-    GIT_REPOSITORY http://raspirepo/mirrors/Catch2.git
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG v3.5.3
 )
 FetchContent_MakeAvailable(Catch2)
 
+## Unit tests for statistics aggregation (reuses production source)
 add_executable(statistics_aggregator_tests
     statistics_aggregator_tests.cpp
     ../src/statistics_aggregator.cpp
@@ -22,6 +24,7 @@ include(CTest)
 include(Catch)
 catch_discover_tests(statistics_aggregator_tests)
 
+## Workflow tests for ping session + aggregator
 add_executable(ping_workflow_tests
     ping_workflow_tests.cpp
     ../src/ping_session.cpp
@@ -36,6 +39,7 @@ target_include_directories(ping_workflow_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 
 catch_discover_tests(ping_workflow_tests)
 
+## Integration tests for platform ping backend (Windows)
 add_executable(integration_ping_tests
     integration_ping_tests.cpp
     ../src/platform_ping_backend_factory.cpp

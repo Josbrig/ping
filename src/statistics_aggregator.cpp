@@ -12,10 +12,14 @@
 namespace pingstats {
 
 namespace {
+/// Max samples retained for median computation; keeps nth_element bounded.
 constexpr std::size_t kMedianCapacity = 1024;
+/// Max samples retained for recent RTT sparkline rendering.
 constexpr std::size_t kRecentCapacity = 256;
+/// Default histogram bucket boundaries in milliseconds.
 const std::vector<double> kDefaultBoundaries{10.0, 20.0, 50.0, 100.0, 200.0, 500.0};
 
+/// Ensure RTTs are non-negative to avoid skewing aggregates.
 double clamp_non_negative(double value)
 {
     return value < 0.0 ? 0.0 : value;
@@ -41,6 +45,7 @@ struct StatisticsAggregatorImpl::Impl {
         }
     };
 
+    /// Retrieve or create stats for a host; initializes histogram buckets.
     HostStats& ensure_host(const std::string& host)
     {
         auto it = hosts.find(host);
@@ -51,6 +56,7 @@ struct StatisticsAggregatorImpl::Impl {
         return it->second;
     }
 
+    /// Clear all accumulated metrics for a host.
     static void reset_stats(HostStats& stats)
     {
         stats.sent_count = 0;
@@ -63,6 +69,7 @@ struct StatisticsAggregatorImpl::Impl {
         stats.recent_rtts.clear();
     }
 
+    /// Compute median from a bounded deque using partial selection.
     static double compute_median(const std::deque<double>& buffer)
     {
         if (buffer.empty()) {
@@ -82,6 +89,7 @@ struct StatisticsAggregatorImpl::Impl {
         return (lower + upper) / 2.0;
     }
 
+    /// Build an immutable snapshot ready for rendering/exporting.
     static StatisticsSnapshot build_snapshot(const HostStats& stats)
     {
         StatisticsSnapshot snap;
@@ -125,6 +133,7 @@ struct StatisticsAggregatorImpl::Impl {
 
 StatisticsAggregatorImpl::StatisticsAggregatorImpl() : impl_(std::make_unique<Impl>()) {}
 
+/// Ingest a single ping result, updating counts, extrema, histogram, median, and recent RTTs.
 void StatisticsAggregatorImpl::add_sample(const std::string& host, double rtt_ms, bool success)
 {
     double rtt = clamp_non_negative(rtt_ms);
@@ -160,6 +169,7 @@ void StatisticsAggregatorImpl::add_sample(const std::string& host, double rtt_ms
     stats.recent_rtts.push_back(rtt);
 }
 
+/// Snapshot metrics for one host; returns empty snapshot when unknown.
 StatisticsSnapshot StatisticsAggregatorImpl::snapshot(const std::string& host) const
 {
     std::unique_lock<std::mutex> lock(impl_->mutex);
@@ -172,6 +182,7 @@ StatisticsSnapshot StatisticsAggregatorImpl::snapshot(const std::string& host) c
     return Impl::build_snapshot(stats_copy);
 }
 
+/// Snapshot all hosts with minimal lock hold time.
 std::vector<StatisticsSnapshot> StatisticsAggregatorImpl::snapshot_all() const
 {
     std::vector<Impl::HostStats> copies;
@@ -191,6 +202,7 @@ std::vector<StatisticsSnapshot> StatisticsAggregatorImpl::snapshot_all() const
     return result;
 }
 
+/// Reset one host's statistics.
 void StatisticsAggregatorImpl::reset(const std::string& host)
 {
     std::lock_guard<std::mutex> lock(impl_->mutex);
@@ -201,6 +213,7 @@ void StatisticsAggregatorImpl::reset(const std::string& host)
     Impl::reset_stats(it->second);
 }
 
+/// Reset statistics for all known hosts.
 void StatisticsAggregatorImpl::reset_all()
 {
     std::lock_guard<std::mutex> lock(impl_->mutex);

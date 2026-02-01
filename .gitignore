@@ -1,4 +1,4 @@
-build
+build*
 # runtime/export outputs
 *.csv
 *.json

@@ -7,6 +7,12 @@ rem Builds Debug, Release, and RelWithDebInfo; runs ctest per config; tries doxy
 set BUILD_DIR=build
 set GENERATOR=
 
+rem Detect logical core count for parallel builds (fallback to 1)
+for /f "tokens=2 delims==" %%a in ('wmic cpu get NumberOfLogicalProcessors /value 2^>nul ^| find "NumberOfLogicalProcessors"') do set CORES=%%a
+if not defined CORES set CORES=1
+set PARALLEL_BUILD=--parallel %CORES%
+set PARALLEL_CTEST=--parallel %CORES%
+
 :parse
 if "%~1"=="" goto done_parse
 if /I "%~1"=="-g" (
@@ -42,18 +48,18 @@ cmake %CONFIGURE_ARGS%
 if errorlevel 1 goto :fail
 
 for %%C in (%CONFIGS%) do (
-  echo [cmake] --build %BUILD_DIR% --config %%C
-  cmake --build %BUILD_DIR% --config %%C
+  echo [cmake] --build %BUILD_DIR% --config %%C %PARALLEL_BUILD%
+  cmake --build %BUILD_DIR% --config %%C %PARALLEL_BUILD%
   if errorlevel 1 goto :fail
 
-  echo [ctest] --test-dir %BUILD_DIR% --build-config %%C --output-on-failure
-  ctest --test-dir %BUILD_DIR% --build-config %%C --output-on-failure
+  echo [ctest] --test-dir %BUILD_DIR% --build-config %%C --output-on-failure %PARALLEL_CTEST%
+  ctest --test-dir %BUILD_DIR% --build-config %%C --output-on-failure %PARALLEL_CTEST%
   if errorlevel 1 goto :fail
 )
 
 rem Attempt docs once (Release); ignore failures
-echo [docs] cmake --build %BUILD_DIR% --config Release --target doxygen
-cmake --build %BUILD_DIR% --config Release --target doxygen
+echo [docs] cmake --build %BUILD_DIR% --config Release --target doxygen %PARALLEL_BUILD%
+cmake --build %BUILD_DIR% --config Release --target doxygen %PARALLEL_BUILD%
 if errorlevel 1 echo [docs] doxygen target unavailable or failed; skipping
 
 popd >nul

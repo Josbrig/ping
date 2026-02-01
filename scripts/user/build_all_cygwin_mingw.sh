@@ -8,6 +8,19 @@ CONFIGS=(Debug Release RelWithDebInfo)
 BUILD_PREFIX="build"
 GENERATOR=""
 
+# Detect maximum parallelism for builds (defaults to all logical cores)
+CORES=1
+if command -v nproc >/dev/null 2>&1; then
+  CORES=$(nproc || echo 1)
+elif command -v sysctl >/dev/null 2>&1; then
+  CORES=$(sysctl -n hw.ncpu 2>/dev/null || echo 1)
+fi
+if ! [[ "$CORES" =~ ^[0-9]+$ ]] || (( CORES < 1 )); then
+  CORES=1
+fi
+PARALLEL_BUILD=(--parallel "$CORES")
+PARALLEL_CTEST=(--parallel "$CORES")
+
 usage() {
   cat <<'EOF'
 Usage: ./scripts/user/build_all_cygwin_mingw.sh [-g GENERATOR]
@@ -16,7 +29,7 @@ Options:
   -g, --generator GENERATOR   Optional CMake generator (e.g., "Ninja", "Unix Makefiles").
 
 Behavior:
-  - Configures, builds, and tests each of Debug/Release/RelWithDebInfo.
+   - Configures, builds (using all detected CPU cores), and tests (parallelized) each of Debug/Release/RelWithDebInfo.
   - Uses separate build directories: build-debug, build-release, build-relwithdebinfo.
   - Runs ctest with output-on-failure.
   - Tries to build 'doxygen' once (Release); failure is non-fatal.
@@ -64,15 +77,15 @@ for cfg in "${CONFIGS[@]}"; do
   fi
   run_cmake "${args[@]}"
 
-  run_cmake --build "$build_dir"
+  run_cmake --build "$build_dir" "${PARALLEL_BUILD[@]}"
 
-  run_ctest --test-dir "$build_dir" --output-on-failure
+  run_ctest --test-dir "$build_dir" --output-on-failure "${PARALLEL_CTEST[@]}"
 done
 
 # Attempt docs once (Release build) if target exists; ignore failure.
 DOC_DIR="${BUILD_PREFIX}-release"
 if [[ -d "$DOC_DIR" ]]; then
-  if cmake --build "$DOC_DIR" --target doxygen >/dev/null 2>&1; then
+  if cmake --build "$DOC_DIR" "${PARALLEL_BUILD[@]}" --target doxygen >/dev/null 2>&1; then
     echo "[docs] doxygen built in $DOC_DIR"
   else
     echo "[docs] doxygen target unavailable or failed; skipping" >&2
